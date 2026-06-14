@@ -1,0 +1,407 @@
+
+/* Keep small form fields inside calculator usable */
+form,
+.form-grid,
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 760px) {
+  form,
+  .form-grid,
+  .input-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* PrakanClear responsive layout polish v1 */
+:root {
+  --pc-max: 1320px;
+  --pc-gold: #C8A96E;
+  --pc-dark: #07111f;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.prakan-responsive-shell,
+main {
+  width: min(var(--pc-max), calc(100vw - 40px)) !important;
+  max-width: var(--pc-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Top nav should look anchored, not floating alone */
+nav,
+.top-nav,
+.navbar,
+.header-nav {
+  width: min(var(--pc-max), calc(100vw - 40px)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Desktop hero: keep it cinematic but not absurdly wide/tall */
+.hero,
+header.hero {
+  width: min(var(--pc-max), calc(100vw - 40px)) !important;
+  max-width: var(--pc-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  min-height: clamp(420px, 42vw, 560px) !important;
+  max-height: 620px !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  background-size: cover !important;
+  background-position: center right !important;
+}
+
+/* Main working area: desktop 2 columns, mobile 1 column */
+.workspace-grid,
+.content-grid,
+.app-grid,
+.analysis-grid,
+.upload-calculator-grid,
+.main-grid {
+  width: min(var(--pc-max), calc(100vw - 40px)) !important;
+  max-width: var(--pc-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: grid !important;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(460px, 1.05fr) !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+
+/* If the app uses a generic grid class for the two main panels */
+.grid.two-column,
+.two-column,
+.columns {
+  display: grid !important;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(460px, 1.05fr) !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+
+/* Panels/cards */
+.panel,
+.upload-panel,
+.calculator-panel,
+.result-panel,
+.upload-card,
+.manual-panel,
+.card,
+section {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Upload/result blocks should not become tiny */
+.upload-panel,
+.upload-card {
+  min-width: 0 !important;
+}
+
+/* Calculator fields can stay two columns on desktop */
+form,
+.form-grid,
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Keep cashback mode buttons readable */
+button {
+  max-width: 100%;
+}
+
+/* Very wide desktop: avoid hero text being microscopic by giving content reasonable width */
+.hero h1,
+.hero .hero-title {
+  max-width: 720px !important;
+}
+
+.hero p,
+.hero .hero-copy,
+.hero li {
+  max-width: 680px !important;
+}
+
+/* Contact/footer should span full container */
+#contact,
+footer {
+  width: min(var(--pc-max), calc(100vw - 40px)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Mobile/tablet */
+@media (max-width: 900px) {
+  .prakan-responsive-shell,
+  main,
+  nav,
+  .top-nav,
+  .navbar,
+  .header-nav,
+  .hero,
+  header.hero,
+  .workspace-grid,
+  .content-grid,
+  .app-grid,
+  .analysis-grid,
+  .upload-calculator-grid,
+  .main-grid,
+  #contact,
+  footer {
+    width: min(100%, calc(100vw - 24px)) !important;
+  }
+
+  .workspace-grid,
+  .content-grid,
+  .app-grid,
+  .analysis-grid,
+  .upload-calculator-grid,
+  .main-grid,
+  .grid.two-column,
+  .two-column,
+  .columns {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .hero,
+  header.hero {
+    min-height: 560px !important;
+    max-height: none !important;
+    background-position: center right !important;
+  }
+
+  form,
+  .form-grid,
+  .input-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero,
+  header.hero {
+    min-height: 560px !important;
+    border-radius: 22px !important;
+  }
+
+  .hero h1,
+  .hero .hero-title {
+    font-size: clamp(2rem, 8vw, 2.6rem) !important;
+    line-height: 1.14 !important;
+  }
+
+  nav,
+  .top-nav,
+  .navbar,
+  .header-nav {
+    justify-content: center !important;
+  }
+}
+
+
+
+/* Hero revert: keep the original card-like hero width, not full desktop stretch */
+.hero,
+header.hero {
+  width: min(1180px, calc(100vw - 48px)) !important;
+  max-width: 1180px !important;
+  margin: 28px auto 24px !important;
+  min-height: 520px !important;
+  max-height: none !important;
+  border-radius: 28px !important;
+  overflow: hidden !important;
+  background-size: cover !important;
+  background-position: center right !important;
+}
+
+/* Keep the workspace/dashboard responsive */
+.workspace-grid,
+.content-grid,
+.app-grid,
+.analysis-grid,
+.upload-calculator-grid,
+.main-grid,
+.grid.two-column,
+.two-column,
+.columns {
+  width: min(1320px, calc(100vw - 40px)) !important;
+  max-width: 1320px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+@media (min-width: 901px) {
+  .workspace-grid,
+  .content-grid,
+  .app-grid,
+  .analysis-grid,
+  .upload-calculator-grid,
+  .main-grid,
+  .grid.two-column,
+  .two-column,
+  .columns {
+    display: grid !important;
+    grid-template-columns: minmax(360px, 0.95fr) minmax(460px, 1.05fr) !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero,
+  header.hero {
+    width: min(100%, calc(100vw - 24px)) !important;
+    min-height: 560px !important;
+    margin: 18px auto !important;
+  }
+}
+
+
+/* If hero uses a pseudo full-width background/container, constrain direct children too */
+body .hero > *,
+body header.hero > *,
+body .hero-card-locked > * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Avoid negative margins / viewport bleed around hero */
+body .hero,
+body header.hero {
+  margin-inline: auto !important;
+}
+
+/* Main dashboard stays responsive */
+@media (min-width: 901px) {
+  body .workspace-grid,
+  body .content-grid,
+  body .app-grid,
+  body .analysis-grid,
+  body .upload-calculator-grid,
+  body .main-grid,
+  body .grid.two-column,
+  body .two-column,
+  body .columns {
+    width: min(1320px, calc(100vw - 64px)) !important;
+    max-width: 1320px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(360px, 0.95fr) minmax(460px, 1.05fr) !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body .hero,
+  body header.hero,
+  body .hero-card-locked,
+  body header.hero-card-locked {
+    width: min(100%, calc(100vw - 24px)) !important;
+    max-width: none !important;
+    min-height: 560px !important;
+    max-height: none !important;
+    margin-top: 18px !important;
+    border-radius: 22px !important;
+  }
+
+  body .workspace-grid,
+  body .content-grid,
+  body .app-grid,
+  body .analysis-grid,
+  body .upload-calculator-grid,
+  body .main-grid,
+  body .grid.two-column,
+  body .two-column,
+  body .columns {
+    width: min(100%, calc(100vw - 24px)) !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Emergency: if any top hero section is first large section after header and still 100vw */
+body > div #root .hero,
+#root .hero {
+  width: min(1180px, calc(100vw - 64px)) !important;
+  max-width: 1180px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+
+/* prevent any image/bg inside the hero from escaping wrapper */
+.hero-width-lock-wrapper img,
+.hero-width-lock-wrapper picture,
+.hero-width-lock-wrapper video {
+  max-width: 100% !important;
+}
+
+.hero-width-lock-wrapper [style*="100vw"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* In case hero has inline absolute/full viewport behavior */
+.hero-width-lock-wrapper section,
+.hero-width-lock-wrapper header,
+.hero-width-lock-wrapper div {
+  max-width: 100% !important;
+}
+
+/* Desktop working area remains dashboard width */
+@media (min-width: 901px) {
+  .workspace-grid,
+  .content-grid,
+  .app-grid,
+  .analysis-grid,
+  .upload-calculator-grid,
+  .main-grid,
+  .grid.two-column,
+  .two-column,
+  .columns {
+    width: min(1320px, calc(100vw - 64px)) !important;
+    max-width: 1320px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(360px, 0.95fr) minmax(460px, 1.05fr) !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-width-lock-wrapper {
+    width: min(100%, calc(100vw - 24px)) !important;
+    margin: 18px auto !important;
+  }
+}
+
+
+/* PrakanClear restored top brand strip */
+@media (max-width: 640px) {
+  .top-brand-strip {
+    width: min(100%, calc(100vw - 24px)) !important;
+    padding: 14px 16px !important;
+    gap: 12px !important;
+  }
+  .top-brand-strip img {
+    width: 86px !important;
+  }
+  .top-brand-strip div div:first-child {
+    font-size: 1.25rem !important;
+  }
+}
