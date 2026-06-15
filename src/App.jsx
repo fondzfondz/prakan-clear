@@ -908,7 +908,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                         marginBottom: "10px"
                       }}
                     >
-                      {isAiAnalyzing ? "🤖 กำลังวิเคราะห์เอกสาร..." : isExtractingPdf ? "⏳ กำลังอ่านข้อความจาก PDF..." : "🤖 วิเคราะห์ด้วย AI"}
+                      {isAiAnalyzing ? "🤖 กำลังวิเคราะห์เอกสาร..." : isExtractingPdf ? "⏳ กำลังอ่านข้อความจาก PDF..." : "🚀 เริ่มการวิเคราะห์"}
                     </button>
                     {aiAnalysisError && (
                       <div style={{
