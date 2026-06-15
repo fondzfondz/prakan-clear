@@ -1069,7 +1069,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
 
           <div className="form-grid">
-            <Input label="เบี้ย/ปี" value={premium} setValue={setPremium} />
+            <Input label="เบี้ยปีละ" value={premium} setValue={setPremium} />
             <Input label="จ่ายกี่ปี" value={payYears} setValue={setPayYears} />
             <Input label="ครบสัญญาปีที่" value={totalYears} setValue={setTotalYears} />
             <Input label="ทุนประกัน" value={sumAssured} setValue={setSumAssured} placeholder="เช่น 1000000" />
