@@ -1,15 +1,22 @@
-
-// ตัวอย่าง Backend API สำหรับ Vercel
-// path: /api/analyze-insurance.js
-// ยังเป็นตัวอย่างโครงสร้าง ยังไม่ได้ต่อ GPT จริง
-// ถ้าจะต่อจริง ต้องตั้ง OPENAI_API_KEY ใน Vercel Environment Variables
+import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  try {console.log(req.method);
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
 
-  return res.status(200).json({
-    result: "ตัวอย่าง API สำเร็จ: ขั้นถัดไปคือต่อ OpenAI GPT API ที่ไฟล์นี้ ไม่ใช่ใส่ API key ในหน้าเว็บ"
-  });
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: "สวัสดี Gemini",
+    });
+
+    return res.status(200).json({
+      result: response.text,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 }
