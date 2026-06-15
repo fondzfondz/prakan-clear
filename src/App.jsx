@@ -114,6 +114,8 @@ function App() {
   const [compareError2, setCompareError2] = useState("");
   const [isExtractingCompare, setIsExtractingCompare] = useState(false);
   const [showRawPdfText, setShowRawPdfText] = useState(false);
+  const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
+  const [aiAnalysisError, setAiAnalysisError] = useState("");
 
   // Set the worker path for pdfjs using Vite local bundled worker
   // This avoids CDN errors such as "Failed to fetch dynamically imported module"
@@ -170,6 +172,63 @@ function App() {
     }
 
     return fullText || "ไม่พบข้อความในไฟล์ PDF";
+  };
+
+  const analyzeUploadedFileWithAI = async () => {
+    if (!uploadedFile) {
+      setAiAnalysisError("กรุณาอัปโหลดไฟล์ก่อน");
+      return;
+    }
+
+    if (uploadedFile.type !== "application/pdf") {
+      const message = "ตอนนี้ระบบวิเคราะห์ด้วย AI รองรับ PDF ก่อน ส่วนไฟล์รูปภาพต้องต่อ OCR / Vision เพิ่มในขั้นถัดไป";
+      setAiAnalysisError(message);
+      setResult(message);
+      return;
+    }
+
+    setIsAiAnalyzing(true);
+    setAiAnalysisError("");
+    setFeedback("");
+    setResult("🤖 กำลังวิเคราะห์เอกสารด้วย AI...\n\nระบบกำลังอ่านข้อความจาก PDF และส่งให้ Gemini ช่วยสรุปข้อมูล กรุณารอสักครู่");
+
+    try {
+      let textToAnalyze = pdfText;
+
+      if (!textToAnalyze || textToAnalyze.trim().length < 20) {
+        textToAnalyze = await readPdfText(uploadedFile);
+        setPdfText(textToAnalyze);
+      }
+
+      if (!textToAnalyze || textToAnalyze.trim().length < 20) {
+        throw new Error("ไม่พบข้อความในไฟล์ PDF หรือไฟล์นี้อาจเป็นรูปภาพสแกน ต้องใช้ OCR / Vision เพิ่ม");
+      }
+
+      const response = await fetch("/api/analyze-insurance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: uploadedFile.name,
+          text: textToAnalyze.slice(0, 24000),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "AI วิเคราะห์ไม่สำเร็จ");
+      }
+
+      setResult(data?.result || "AI วิเคราะห์เสร็จแล้ว แต่ไม่พบข้อความผลลัพธ์");
+    } catch (error) {
+      const message = `❌ วิเคราะห์ด้วย AI ไม่สำเร็จ\n\n${error.message}`;
+      setAiAnalysisError(message);
+      setResult(message);
+    } finally {
+      setIsAiAnalyzing(false);
+    }
   };
 
   const extractComparePdfText = async (file, side) => {
@@ -810,6 +869,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
                             setUploadedFile(e.target.files[0]);
+                            setAiAnalysisError("");
+                            setResult("");
                             setShowRawPdfText(false);
                           }
                         }}
@@ -830,12 +891,46 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                     <FileText size={32} style={{color: "#c8a96e", marginBottom: "8px"}} />
                     <h3 style={{margin: "6px 0", color: "#172033"}}>✅ ไฟล์ที่อัปโหลด</h3>
                     <p style={{color: "#7a6235", marginBottom: "12px", fontWeight: "500"}}>{uploadedFile.name}</p>
-                    <p style={{color: "#8a7a5b", fontSize: "13px", marginBottom: "12px"}}>ในเวอร์ชันจริงจะวิเคราะห์ด้วย AI (ยังไม่พร้อม)</p>
+                    <p style={{color: "#8a7a5b", fontSize: "13px", marginBottom: "12px"}}>พร้อมวิเคราะห์ด้วย AI แล้ว กดปุ่มด้านล่างเพื่อส่งข้อความจาก PDF ให้ Gemini สรุป</p>
+                    <button
+                      disabled={isExtractingPdf || isAiAnalyzing}
+                      onClick={analyzeUploadedFileWithAI}
+                      style={{
+                        border: "none",
+                        background: isExtractingPdf || isAiAnalyzing ? "#9CA3AF" : "linear-gradient(135deg, #DDBB68 0%, #C8A96E 45%, #B8872D 100%)",
+                        color: isExtractingPdf || isAiAnalyzing ? "#111827" : "#07111f",
+                        padding: "12px 16px",
+                        borderRadius: "14px",
+                        cursor: isExtractingPdf || isAiAnalyzing ? "not-allowed" : "pointer",
+                        fontWeight: "900",
+                        fontSize: "14px",
+                        width: "100%",
+                        marginBottom: "10px"
+                      }}
+                    >
+                      {isAiAnalyzing ? "🤖 กำลังวิเคราะห์เอกสาร..." : isExtractingPdf ? "⏳ กำลังอ่านข้อความจาก PDF..." : "🤖 วิเคราะห์ด้วย AI"}
+                    </button>
+                    {aiAnalysisError && (
+                      <div style={{
+                        color: "#fecaca",
+                        background: "rgba(127, 29, 29, 0.32)",
+                        border: "1px solid rgba(248, 113, 113, 0.45)",
+                        borderRadius: "12px",
+                        padding: "10px",
+                        fontSize: "13px",
+                        lineHeight: 1.6,
+                        marginBottom: "10px",
+                        whiteSpace: "pre-wrap"
+                      }}>
+                        {aiAnalysisError}
+                      </div>
+                    )}
                     <button style={{border: "none", background: "#ef4444", color: "white", padding: "10px 14px", borderRadius: "12px", cursor: "pointer", fontWeight: "700", fontSize: "13px"}}
                       onClick={() => {
                         setUploadedFile(null);
                         setPdfText("");
                         setPdfError("");
+                        setAiAnalysisError("");
                         setShowRawPdfText(false);
                       }}
                     >
@@ -1268,7 +1363,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           {!result ? (
             <div className="empty">
               <AlertTriangle size={28} />
-              <p>กรอกข้อมูลหรืออัปโหลดไฟล์ แล้วกด “สร้างผลวิเคราะห์”</p>
+              <p>กรอกข้อมูลเอง หรืออัปโหลด PDF แล้วกด “วิเคราะห์ด้วย AI”</p>
             </div>
           ) : (
             <>
