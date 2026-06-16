@@ -114,8 +114,6 @@ function App() {
   const [compareError2, setCompareError2] = useState("");
   const [isExtractingCompare, setIsExtractingCompare] = useState(false);
   const [showRawPdfText, setShowRawPdfText] = useState(false);
-  const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
-  const [aiAnalysisError, setAiAnalysisError] = useState("");
 
   // Set the worker path for pdfjs using Vite local bundled worker
   // This avoids CDN errors such as "Failed to fetch dynamically imported module"
@@ -172,63 +170,6 @@ function App() {
     }
 
     return fullText || "ไม่พบข้อความในไฟล์ PDF";
-  };
-
-  const analyzeUploadedFileWithAI = async () => {
-    if (!uploadedFile) {
-      setAiAnalysisError("กรุณาอัปโหลดไฟล์ก่อน");
-      return;
-    }
-
-    if (uploadedFile.type !== "application/pdf") {
-      const message = "ตอนนี้ระบบวิเคราะห์ด้วย AI รองรับ PDF ก่อน ส่วนไฟล์รูปภาพต้องต่อ OCR / Vision เพิ่มในขั้นถัดไป";
-      setAiAnalysisError(message);
-      setResult(message);
-      return;
-    }
-
-    setIsAiAnalyzing(true);
-    setAiAnalysisError("");
-    setFeedback("");
-    setResult("🤖 กำลังวิเคราะห์เอกสารด้วย AI...\n\nระบบกำลังอ่านข้อความจาก PDF และส่งให้ Gemini ช่วยสรุปข้อมูล กรุณารอสักครู่");
-
-    try {
-      let textToAnalyze = pdfText;
-
-      if (!textToAnalyze || textToAnalyze.trim().length < 20) {
-        textToAnalyze = await readPdfText(uploadedFile);
-        setPdfText(textToAnalyze);
-      }
-
-      if (!textToAnalyze || textToAnalyze.trim().length < 20) {
-        throw new Error("ไม่พบข้อความในไฟล์ PDF หรือไฟล์นี้อาจเป็นรูปภาพสแกน ต้องใช้ OCR / Vision เพิ่ม");
-      }
-
-      const response = await fetch("/api/analyze-insurance", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fileName: uploadedFile.name,
-          text: textToAnalyze.slice(0, 24000),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "AI วิเคราะห์ไม่สำเร็จ");
-      }
-
-      setResult(data?.result || "AI วิเคราะห์เสร็จแล้ว แต่ไม่พบข้อความผลลัพธ์");
-    } catch (error) {
-      const message = `❌ วิเคราะห์ด้วย AI ไม่สำเร็จ\n\n${error.message}`;
-      setAiAnalysisError(message);
-      setResult(message);
-    } finally {
-      setIsAiAnalyzing(false);
-    }
   };
 
   const extractComparePdfText = async (file, side) => {
@@ -741,6 +682,25 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         }
         .dark-theme .empty { color: #cbd5e1 !important; }
         .dark-theme footer { color: #94a3b8 !important; }
+        @media (max-width: 768px) {
+          .prakan-responsive-shell {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 16px !important;
+          }
+          .prakan-calculator-panel { order: 1 !important; }
+          .prakan-presentation-panel { order: 2 !important; }
+          .result-panel { order: 3 !important; }
+          .form-grid,
+          .cards,
+          .compare-upload-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .top-brand-strip {
+            width: calc(100vw - 24px) !important;
+            padding: 14px !important;
+          }
+        }
       `}</style>
 <section
           style={{
@@ -812,254 +772,83 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
 
       <main className="layout prakan-responsive-shell">
-        <section className="panel">
+        <section className="panel prakan-presentation-panel">
           <div className="tabs">
             <button className={mode === "analyze" ? "active" : ""} onClick={() => setMode("analyze")}>
-              <FileText size={16} /> 🔍 วิเคราะห์แบบ
+              <FileText size={16} /> 📊 กราฟนำเสนอ
             </button>
             <button className={mode === "compare" ? "active" : ""} onClick={() => setMode("compare")}>
-              <Scale size={16} /> เปรียบเทียบ 2 แบบ
+              <Scale size={16} /> วิเคราะห์เอกสาร
             </button>
-          </div>
-
-          <div style={{
-            marginTop: "12px",
-            marginBottom: "14px",
-            padding: "14px",
-            borderRadius: "16px",
-            background: "#0F172A",
-            border: "1px solid rgba(200,169,110,0.35)",
-            fontSize: "13px",
-            lineHeight: 1.6,
-            color: "#E2E8F0",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.25)"
-          }}>
-            <label style={{display: "flex", alignItems: "flex-start", gap: "10px", cursor: "pointer"}}>
-              <input
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                style={{marginTop: "4px", width: "16px", height: "16px", accentColor: "#C8A96E"}}
-              />
-              <span>
-                ฉันยืนยันว่าได้รับอนุญาตให้อัปโหลดเอกสารนี้ และยินยอมให้ระบบประมวลผลข้อมูลเพื่อการสรุป วิเคราะห์ และคำนวณเบื้องต้นตามวัตถุประสงค์ของเว็บไซต์
-
-คำแนะนำด้านความเป็นส่วนตัว:
-ไม่แนะนำให้อัปโหลดเอกสารที่มีชื่อ-นามสกุลจริง เลขบัตรประชาชน เบอร์โทรศัพท์ อีเมล ที่อยู่ หรือข้อมูลส่วนบุคคลที่ไม่จำเป็นต่อการวิเคราะห์แบบประกัน หากเอกสารมีข้อมูลดังกล่าว ผู้ใช้งานควรปกปิดข้อมูลก่อนอัปโหลดทุกครั้ง
-
-หมายเหตุ:
-แพลตฟอร์มนี้ไม่มีระบบขายประกัน ไม่มีตะกร้าสินค้า ไม่มีการรับค่านายหน้า และไม่มีการส่งต่อข้อมูลไปยังตัวแทน บริษัทประกัน หรือบุคคลภายนอก ผู้ใช้งานควรตรวจสอบข้อมูลจากเอกสารต้นฉบับและเงื่อนไขกรมธรรม์กับบริษัทประกันอีกครั้ง
-              </span>
-            </label>
           </div>
 
           {mode === "analyze" && (
             <>
-              <div className="upload-box">
-                {!uploadedFile ? (
-                  <>
-                    <Upload size={34} />
-                    <h3 style={{margin: "10px 0 6px", color: "#172033"}}>อัปโหลดใบเสนอขาย / ภาพหน้าจอ / PDF</h3>
-                    <p style={{color: "#8a7a5b", marginBottom: "12px"}}>หรือกรอกข้อมูลเองด้านล่าง</p>
-                    <label style={{cursor: "pointer"}}>
-                      <input 
-                        type="file" 
-                        accept=".pdf,.jpg,.jpeg,.png,.gif" 
-                        disabled={!acceptedTerms} 
-                        onChange={(e) => {
-                          if (e.target.files && e.target.files[0]) {
-                            setUploadedFile(e.target.files[0]);
-                            setAiAnalysisError("");
-                            setResult("");
-                            setShowRawPdfText(false);
-                          }
-                        }}
-                        style={{display: "none"}}
-                      />
-                      <button
-                        className="upload-file-btn"
-                        disabled={!acceptedTerms}
-                        style={{border: "1px solid rgba(126,83,20,0.45)", background: acceptedTerms ? "linear-gradient(135deg, #DDBB68 0%, #C8A96E 45%, #B8872D 100%)" : "linear-gradient(135deg, #D0A74B 0%, #B8872D 100%)", color: "#07111f", padding: "12px 16px", borderRadius: "12px", cursor: acceptedTerms ? "pointer" : "not-allowed", fontWeight: "800", opacity: acceptedTerms ? 1 : 0.88}}
-                        onClick={(e) => acceptedTerms && e.currentTarget.parentElement.querySelector('input[type="file"]').click()}
-                      >
-                        📁 เลือกไฟล์
-                      </button>
-                    </label>
-                  </>
-                ) : (
-                  <>
-                    <FileText size={32} style={{color: "#c8a96e", marginBottom: "8px"}} />
-                    <h3 style={{margin: "6px 0", color: "#172033"}}>✅ ไฟล์ที่อัปโหลด</h3>
-                    <p style={{color: "#7a6235", marginBottom: "12px", fontWeight: "500"}}>{uploadedFile.name}</p>
-                    <p style={{color: "#8a7a5b", fontSize: "13px", marginBottom: "12px"}}>พร้อมวิเคราะห์ด้วย AI แล้ว กดปุ่มด้านล่างเพื่อส่งข้อความจาก PDF ให้ Gemini สรุป</p>
-                    <button
-                      disabled={isExtractingPdf || isAiAnalyzing}
-                      onClick={analyzeUploadedFileWithAI}
-                      style={{
-                        border: "none",
-                        background: isExtractingPdf || isAiAnalyzing ? "#9CA3AF" : "linear-gradient(135deg, #DDBB68 0%, #C8A96E 45%, #B8872D 100%)",
-                        color: isExtractingPdf || isAiAnalyzing ? "#111827" : "#07111f",
-                        padding: "12px 16px",
-                        borderRadius: "14px",
-                        cursor: isExtractingPdf || isAiAnalyzing ? "not-allowed" : "pointer",
-                        fontWeight: "900",
-                        fontSize: "14px",
-                        width: "100%",
-                        marginBottom: "10px"
-                      }}
-                    >
-                      {isAiAnalyzing ? "🤖 กำลังวิเคราะห์เอกสาร..." : isExtractingPdf ? "⏳ กำลังอ่านข้อความจาก PDF..." : "🤖 วิเคราะห์ด้วย AI"}
-                    </button>
-                    {aiAnalysisError && (
-                      <div style={{
-                        color: "#fecaca",
-                        background: "rgba(127, 29, 29, 0.32)",
-                        border: "1px solid rgba(248, 113, 113, 0.45)",
-                        borderRadius: "12px",
-                        padding: "10px",
-                        fontSize: "13px",
-                        lineHeight: 1.6,
-                        marginBottom: "10px",
-                        whiteSpace: "pre-wrap"
-                      }}>
-                        {aiAnalysisError}
-                      </div>
-                    )}
-                    <button style={{border: "none", background: "#ef4444", color: "white", padding: "10px 14px", borderRadius: "12px", cursor: "pointer", fontWeight: "700", fontSize: "13px"}}
-                      onClick={() => {
-                        setUploadedFile(null);
-                        setPdfText("");
-                        setPdfError("");
-                        setAiAnalysisError("");
-                        setShowRawPdfText(false);
-                      }}
-                    >
-                      🗑️ ลบไฟล์
-                    </button>
-                  </>
-                )}
+              <div style={{
+                marginTop: "14px",
+                padding: "16px",
+                borderRadius: "18px",
+                background: "rgba(2,6,23,0.62)",
+                border: "1px solid rgba(200,169,110,0.28)",
+                color: "#E5E7EB"
+              }}>
+                <h2 style={{margin: "0 0 8px", color: "#F8FAFC"}}>ภาพรวมกระแสเงินสด</h2>
+                <p style={{margin: 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.65, fontSize: "14px"}}>
+                  กรอกข้อมูลทางขวา แล้วกราฟจะอัปเดตทันที ใช้สำหรับอธิบายลูกค้าให้เห็นภาพเงินจ่าย เงินคืน และเงินครบสัญญาแบบรายปี
+                </p>
               </div>
 
-              {uploadedFile && (
-                <div style={{marginTop: "12px", borderRadius: "16px", border: "1px solid #e3d7c4", padding: "14px", backgroundColor: "#fffdf9"}}>
-                  <button
-                    onClick={() => setShowRawPdfText(!showRawPdfText)}
-                    style={{
-                      width: "100%",
-                      border: "none",
-                      background: "#f9f4eb",
-                      color: "#172033",
-                      padding: "10px 12px",
-                      borderRadius: "12px",
-                      cursor: "pointer",
-                      fontWeight: 700,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between"
-                    }}
-                  >
-                    <span style={{display: "flex", alignItems: "center", gap: "8px"}}><FileText size={16} /> ข้อความที่อ่านได้จาก PDF</span>
-                    <span>{showRawPdfText ? "ซ่อน" : "ดูข้อความ"}</span>
-                  </button>
-
-                  {isExtractingPdf && (
-                    <p style={{color: "#8a7a5b", fontStyle: "italic", marginTop: "12px"}}>⏳ กำลังอ่านไฟล์ PDF...</p>
-                  )}
-
-                  {showRawPdfText && pdfError && (
-                    <div style={{backgroundColor: "#fee2e2", color: "#7f1d1d", padding: "12px", borderRadius: "12px", marginTop: "12px"}}>
-                      {pdfError}
-                    </div>
-                  )}
-
-                  {showRawPdfText && pdfText && !pdfError && (
-                    <div style={{backgroundColor: "#f9f4eb", padding: "12px", borderRadius: "12px", maxHeight: "220px", overflowY: "auto", fontSize: "13px", lineHeight: "1.6", color: "#495065", whiteSpace: "pre-wrap", wordBreak: "break-word", marginTop: "12px"}}>
-                      {pdfText}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="form-section">
-                <h3>ข้อมูลแบบประกัน</h3>
-                <div className="form-grid">
-                  <label style={{gridColumn: "1 / -1"}}>
-                    <span>บริษัทประกัน</span>
-                    <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="เช่น " />
-                  </label>
-                  <label style={{gridColumn: "1 / -1"}}>
-                    <span>ชื่อแบบประกัน</span>
-                    <input type="text" value={planName} onChange={(e) => setPlanName(e.target.value)} placeholder="เช่น " />
-                  </label>
-                </div>
+              <div style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", marginTop: "12px"}}>
+                <Metric title="รวมเบี้ยที่จ่าย" value={`${money(calc.totalPremium)} บาท`} />
+                <Metric title="เงินคืนรวม" value={`${money(calc.totalCashback)} บาท`} />
+                <Metric title="IRR รับประกัน" value={`${Number.isFinite(calc.guaranteedIRR) ? calc.guaranteedIRR.toFixed(2) : "-"}%`} />
+                <Metric title="IRR รวมคาดการณ์" value={`${Number.isFinite(calc.projectedIRR) ? calc.projectedIRR.toFixed(2) : "-"}%`} />
               </div>
 
-              <div className="rules">
-                <h3>หลักการวิเคราะห์</h3>
-                {false && RULES.map((rule) => (
-                  <div className="rule" key={rule}>
-                    <ShieldCheck size={15} />
-                    <span>{rule}</span>
-                  </div>
-                ))}
+              <CashFlowChart rows={calc.rows} totalYears={totalYears} premium={premium} payYears={payYears} />
+              <CumulativeChart rows={calc.rows} totalYears={totalYears} premium={premium} payYears={payYears} />
+
+              <div style={{
+                marginTop: "12px",
+                padding: "13px 14px",
+                borderRadius: "14px",
+                border: "1px solid rgba(200,169,110,0.28)",
+                background: "rgba(200,169,110,0.10)",
+                color: "rgba(255,255,255,0.78)",
+                fontSize: "13px",
+                lineHeight: 1.65
+              }}>
+                หมายเหตุ: กราฟนี้แสดงตามข้อมูลที่กรอกเท่านั้น ไม่ใช่เอกสารเสนอขายอย่างเป็นทางการ และควรตรวจสอบกับใบเสนอขายหรือกรมธรรม์ทุกครั้ง
               </div>
             </>
           )}
 
           {mode === "compare" && (
-            <>
-              <div className="compare-upload-grid" style={{display: "grid", gridTemplateColumns: "1fr", gap: "12px"}}>
-                <CompareUploadBox
-                  title="แบบที่ 1"
-                  file={compareFile1}
-                  setFile={setCompareFile1}
-                  text={compareText1}
-                  error={compareError1}
-                  disabled={!acceptedTerms}
-                />
-                <CompareUploadBox
-                  title="แบบที่ 2"
-                  file={compareFile2}
-                  setFile={setCompareFile2}
-                  text={compareText2}
-                  error={compareError2}
-                  disabled={!acceptedTerms}
-                />
+            <div style={{marginTop: "14px"}}>
+              <div style={{
+                padding: "18px",
+                borderRadius: "18px",
+                border: "1px solid rgba(200,169,110,0.28)",
+                background: "rgba(2,6,23,0.62)",
+                textAlign: "center"
+              }}>
+                <FileText size={34} style={{color: "#C8A96E", marginBottom: "10px"}} />
+                <h2 style={{margin: "0 0 8px", color: "#F8FAFC"}}>ยังไม่เปิดให้บริการ</h2>
+                <p style={{margin: 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.7}}>
+                  กำลังพัฒนา
+                </p>
               </div>
 
-              {isExtractingCompare && (
-                <div style={{marginTop: "12px", color: "#8a7a5b", fontSize: "14px"}}>
-                  ⏳ กำลังอ่านข้อความจาก PDF...
-                </div>
-              )}
-
-              <button
-                onClick={generateCompareAnalysis}
-                disabled={!acceptedTerms || !compareFile1 || !compareFile2}
-                style={{
-                  marginTop: "1rem",
-                  width: "100%",
-                  padding: "0.75rem",
-                  fontSize: "1rem",
-                  fontWeight: "bold",
-                  background: acceptedTerms && compareFile1 && compareFile2 ? "linear-gradient(135deg, #DDBB68 0%, #C8A96E 45%, #B8872D 100%)" : "#D1D5DB",
-                  color: acceptedTerms && compareFile1 && compareFile2 ? "#07111f" : "#374151",
-                  border: "none",
-                  borderRadius: "0.5rem",
-                  cursor: acceptedTerms && compareFile1 && compareFile2 ? "pointer" : "not-allowed"
-                }}
-              >
-                ⚖️ สร้างผลเปรียบเทียบ
-              </button>
-
-              <div style={{marginTop: "1rem", fontSize: "13px", color: "#8a7a5b", lineHeight: 1.6}}>
-                ตอนนี้โหมดเปรียบเทียบอ่าน PDF ได้แล้ว แต่ยังไม่ต่อ GPT API จริง
+              <div style={{display: "grid", gap: "12px", marginTop: "14px"}}>
+                <DisabledFeatureCard title="อัปโหลดใบเสนอขาย" detail="รองรับ PDF / รูปภาพ เพื่อให้ AI สรุปข้อมูลแบบประกัน" />
+                <DisabledFeatureCard title="เปรียบเทียบ 2 แบบ" detail="อัปโหลดเอกสาร 2 ชุด แล้วสรุปจุดต่างของเบี้ย เงินคืน ความคุ้มครอง และ IRR" />
+                <DisabledFeatureCard title="ดึง IRR จากเอกสาร" detail="แยก IRR รับประกัน และ IRR รวมเงินปันผลที่ไม่รับประกัน" />
               </div>
-            </>
+            </div>
           )}
         </section>
 
-        <section className="panel">
+        <section className="panel prakan-calculator-panel">
           <h2>เครื่องคำนวณและกรอกข้อมูล</h2>
           <p className="muted">กรอกข้อมูลจากใบเสนอขายประกัน แล้วระบบจะคำนวณ IRR และสร้างผลวิเคราะห์อัตโนมัติ</p>
 
@@ -1069,10 +858,10 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
 
           <div className="form-grid">
-            <Input label="เบี้ย/ปี" value={premium} setValue={setPremium} />
-            <Input label="จ่ายกี่ปี" value={payYears} setValue={setPayYears} />
+            <Input label="เบี้ยประกันปีละ" value={premium} setValue={setPremium} />
+            <Input label="ชำระเบี้ยกี่ปี" value={payYears} setValue={setPayYears} />
             <Input label="ครบสัญญาปีที่" value={totalYears} setValue={setTotalYears} />
-            <Input label="ทุนประกัน" value={sumAssured} setValue={setSumAssured} placeholder="เช่น 1000000" />
+            <Input label="ทุนประกัน (บาท)" value={sumAssured} setValue={setSumAssured} placeholder="เช่น 1000000" />
             <div style={{
               gridColumn: "1 / -1",
               marginTop: "4px",
@@ -1363,7 +1152,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           {!result ? (
             <div className="empty">
               <AlertTriangle size={28} />
-              <p>กรอกข้อมูลเอง หรืออัปโหลด PDF แล้วกด “วิเคราะห์ด้วย AI”</p>
+              <p>กรอกข้อมูลหรืออัปโหลดไฟล์ แล้วกด “สร้างผลวิเคราะห์”</p>
             </div>
           ) : (
             <>
@@ -1422,6 +1211,187 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
       <footer style={{fontSize: "14px", lineHeight: 1.7, maxWidth: "980px", margin: "26px auto"}}>
         {FULL_DISCLAIMER}
       </footer>
+    </div>
+  );
+}
+
+
+function CashFlowChart({ rows, totalYears, premium, payYears }) {
+  const allRows = rows.filter((row) => row.year > 0 && row.year <= Math.max(totalYears || 0, 1));
+  const displayLimit = 25;
+  const visibleRows = allRows.slice(0, displayLimit);
+  const hiddenYears = Math.max(0, allRows.length - visibleRows.length);
+
+  const graphRows = visibleRows.map((row) => {
+    const paidForDisplay = row.year >= 1 && row.year <= Number(payYears || 0)
+      ? Number(premium || 0)
+      : 0;
+    const receivedForDisplay =
+      (row.cashback || 0) +
+      (row.maturity || 0) +
+      (row.dividend || 0) +
+      (row.bonus || 0);
+
+    return {
+      ...row,
+      paidForDisplay,
+      receivedForDisplay,
+    };
+  });
+
+  const maxValue = Math.max(
+    1,
+    ...graphRows.map((row) => Math.max(row.paidForDisplay || 0, row.receivedForDisplay || 0))
+  );
+
+  return (
+    <div style={{
+      marginTop: "14px",
+      padding: "16px",
+      borderRadius: "18px",
+      background: "rgba(2,6,23,0.58)",
+      border: "1px solid rgba(200,169,110,0.24)"
+    }}>
+      <h3 style={{margin: "0 0 6px", color: "#F8FAFC"}}>กราฟเงินเข้า-ออก รายปี</h3>
+      <div style={{fontSize: "12px", color: "rgba(255,255,255,0.68)", marginBottom: "12px"}}>
+        แดง = เบี้ยที่จ่าย / ทอง = เงินที่ได้รับ แสดงเป็นแนวตั้งเพื่อให้ใช้งานบนมือถือได้ง่าย
+      </div>
+
+      {graphRows.length === 0 ? (
+        <div style={{padding: "22px", borderRadius: "14px", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.72)", textAlign: "center"}}>
+          กรอกปีครบสัญญา เพื่อแสดงกราฟรายปี
+        </div>
+      ) : (
+        <div style={{display: "grid", gap: "10px"}}>
+          {graphRows.map((row) => {
+            const paidWidth = Math.min(100, ((row.paidForDisplay || 0) / maxValue) * 100);
+            const receivedWidth = Math.min(100, ((row.receivedForDisplay || 0) / maxValue) * 100);
+            return (
+              <div key={row.year} style={{
+                display: "grid",
+                gridTemplateColumns: "58px 1fr",
+                gap: "10px",
+                alignItems: "center",
+                padding: "10px",
+                borderRadius: "14px",
+                background: "rgba(255,255,255,0.045)",
+                border: "1px solid rgba(255,255,255,0.06)"
+              }}>
+                <div style={{fontSize: "12px", color: "rgba(255,255,255,0.78)", fontWeight: 800}}>ปี {row.year}</div>
+                <div style={{display: "grid", gap: "6px"}}>
+                  <div style={{display: "grid", gridTemplateColumns: "76px 1fr 86px", gap: "8px", alignItems: "center"}}>
+                    <div style={{fontSize: "11px", color: "rgba(255,255,255,0.62)"}}>เบี้ยจ่าย</div>
+                    <div style={{height: "12px", borderRadius: "999px", background: "rgba(255,255,255,0.10)", overflow: "hidden"}}>
+                      <div style={{width: `${paidWidth}%`, height: "100%", borderRadius: "999px", background: row.paidForDisplay > 0 ? "#EF4444" : "transparent"}} />
+                    </div>
+                    <div style={{fontSize: "11px", color: "rgba(255,255,255,0.72)", textAlign: "right"}}>
+                      {row.paidForDisplay > 0 ? money(row.paidForDisplay) : "-"}
+                    </div>
+                  </div>
+                  <div style={{display: "grid", gridTemplateColumns: "76px 1fr 86px", gap: "8px", alignItems: "center"}}>
+                    <div style={{fontSize: "11px", color: "rgba(255,255,255,0.62)"}}>เงินรับ</div>
+                    <div style={{height: "12px", borderRadius: "999px", background: "rgba(255,255,255,0.10)", overflow: "hidden"}}>
+                      <div style={{width: `${receivedWidth}%`, height: "100%", borderRadius: "999px", background: row.receivedForDisplay > 0 ? "linear-gradient(90deg, #C8A96E, #F8D978)" : "transparent"}} />
+                    </div>
+                    <div style={{fontSize: "11px", color: "rgba(255,255,255,0.72)", textAlign: "right"}}>
+                      {row.receivedForDisplay > 0 ? money(row.receivedForDisplay) : "-"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {hiddenYears > 0 && (
+            <div style={{
+              marginTop: "4px",
+              padding: "12px",
+              borderRadius: "14px",
+              background: "rgba(200,169,110,0.10)",
+              border: "1px solid rgba(200,169,110,0.24)",
+              color: "rgba(255,255,255,0.76)",
+              fontSize: "12px",
+              lineHeight: 1.55,
+              textAlign: "center"
+            }}>
+              แสดง 25 ปีแรกจากทั้งหมด {allRows.length} ปี เพื่อไม่ให้กราฟยาวเกินไปบนมือถือ
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CumulativeChart({ rows, totalYears, premium, payYears }) {
+  const allRows = rows.filter((row) => row.year > 0 && row.year <= Math.max(totalYears || 0, 1));
+  const displayLimit = 25;
+  const visibleRows = allRows.slice(0, displayLimit);
+  const hiddenYears = Math.max(0, allRows.length - visibleRows.length);
+
+  let paidSum = 0;
+  let receivedSum = 0;
+  const data = visibleRows.map((row) => {
+    const paidForDisplay = row.year >= 1 && row.year <= Number(payYears || 0)
+      ? Number(premium || 0)
+      : 0;
+    paidSum += paidForDisplay;
+    receivedSum += (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0);
+    return { year: row.year, paidSum, receivedSum };
+  });
+  const maxValue = Math.max(1, ...data.map((row) => Math.max(row.paidSum, row.receivedSum)));
+
+  return (
+    <div style={{
+      marginTop: "14px",
+      padding: "16px",
+      borderRadius: "18px",
+      background: "rgba(2,6,23,0.58)",
+      border: "1px solid rgba(200,169,110,0.24)"
+    }}>
+      <h3 style={{margin: "0 0 6px", color: "#F8FAFC"}}>กราฟสะสม</h3>
+      <div style={{fontSize: "12px", color: "rgba(255,255,255,0.68)", marginBottom: "12px"}}>
+        แสดงเบี้ยสะสมเทียบกับเงินรับสะสมตามข้อมูลที่กรอก
+      </div>
+
+      {data.length === 0 ? (
+        <div style={{padding: "22px", borderRadius: "14px", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.72)", textAlign: "center"}}>
+          ยังไม่มีข้อมูลสำหรับกราฟสะสม
+        </div>
+      ) : (
+        <div style={{display: "grid", gap: "10px"}}>
+          {data.map((row) => (
+            <div key={row.year} style={{display: "grid", gridTemplateColumns: "54px 1fr", gap: "8px", alignItems: "center"}}>
+              <div style={{fontSize: "12px", color: "rgba(255,255,255,0.72)"}}>ปี {row.year}</div>
+              <div>
+                <div style={{height: "10px", borderRadius: "99px", background: "rgba(255,255,255,0.10)", overflow: "hidden", marginBottom: "4px"}}>
+                  <div style={{width: `${Math.min(100, (row.paidSum / maxValue) * 100)}%`, height: "100%", background: "#EF4444"}} />
+                </div>
+                <div style={{height: "10px", borderRadius: "99px", background: "rgba(255,255,255,0.10)", overflow: "hidden"}}>
+                  <div style={{width: `${Math.min(100, (row.receivedSum / maxValue) * 100)}%`, height: "100%", background: "linear-gradient(90deg, #C8A96E, #F8D978)"}} />
+                </div>
+              </div>
+            </div>
+          ))}
+          <div style={{display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "4px", fontSize: "12px", color: "rgba(255,255,255,0.72)"}}>
+            <span>■ เบี้ยสะสม</span>
+            <span style={{color: "#F8D978"}}>■ เงินรับสะสม</span>
+          </div>
+          {hiddenYears > 0 && (
+            <div style={{
+              marginTop: "4px",
+              padding: "10px",
+              borderRadius: "14px",
+              background: "rgba(200,169,110,0.10)",
+              border: "1px solid rgba(200,169,110,0.24)",
+              color: "rgba(255,255,255,0.76)",
+              fontSize: "12px",
+              textAlign: "center"
+            }}>
+              แสดงกราฟสะสม 25 ปีแรกจากทั้งหมด {allRows.length} ปี
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -1593,12 +1563,5 @@ function Metric({ title, value }) {
     </div>
   );
 }
-<section className="panel prakan-upload-analysis-placeholder">
-          <h2 style={{marginTop: 0}}>ผลวิเคราะห์จากเอกสาร</h2>
-          <p className="muted" style={{marginBottom: 0}}>
-            เมื่ออัปโหลดไฟล์ ระบบจะแสดงข้อมูลที่อ่านได้จากเอกสารในส่วนนี้ เช่น บริษัทประกัน ชื่อแบบประกัน เบี้ย ทุนประกัน เงินคืน และข้อมูลสำคัญ ก่อนนำไปตรวจสอบหรือแก้ไขต่อในฟอร์มด้านล่าง
-          </p>
-        </section>
-
 
 export default App;
