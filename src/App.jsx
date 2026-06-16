@@ -775,7 +775,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         <section className="panel prakan-presentation-panel">
           <div className="tabs">
             <button className={mode === "analyze" ? "active" : ""} onClick={() => setMode("analyze")}>
-              <FileText size={16} /> 📊 กราฟนำเสนอ
+              <FileText size={16} /> 📊 กราฟ
             </button>
             <button className={mode === "compare" ? "active" : ""} onClick={() => setMode("compare")}>
               <Scale size={16} /> วิเคราะห์เอกสาร
@@ -811,7 +811,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               </div>
 
               <div style={{display: "grid", gap: "12px", marginTop: "14px"}}>
-                <DisabledFeatureCard title="อัปโหลดใบเสนอขาย" detail="รองรับ PDF / รูปภาพ เพื่อให้ AI สรุปข้อมูลแบบประกัน" />
+                <DisabledFeatureCard title="อัปโหลดใบเสนอขาย" detail="รองรับ PDF / รูปภาพ เพื่อสรุปข้อมูลแบบประกัน" />
                 <DisabledFeatureCard title="เปรียบเทียบ 2 แบบ" detail="อัปโหลดเอกสาร 2 ชุด แล้วสรุปจุดต่างของเบี้ย เงินคืน ความคุ้มครอง และ IRR" />
                 <DisabledFeatureCard title="ดึง IRR จากเอกสาร" detail="แยก IRR รับประกัน และ IRR รวมเงินปันผลที่ไม่รับประกัน" />
               </div>
