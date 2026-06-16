@@ -386,6 +386,12 @@ const cashbackCashflows = useMemo(() => {
     return { rows, guaranteedIRR, projectedIRR, totalPremium, totalCashback };
   }, [premium, payYears, totalYears, maturity, dividend, dividendMode, annualDividendCashflows, maturityBonus, cashbackCashflows]);
 
+  const projectedDividendTotal = (dividendMode === "annual"
+    ? Object.values(annualDividendCashflows).reduce((s, v) => s + Number(v || 0), 0)
+    : Number(dividend || 0)) + Number(maturityBonus || 0);
+  const totalBenefitsReceived = Number(calc.totalCashback || 0) + Number(maturity || 0) + projectedDividendTotal;
+  const netDifference = totalBenefitsReceived - Number(calc.totalPremium || 0);
+
   const generateAnalysis = () => {
     const annualCashback = (sumAssured * cashbackPercent) / 100;
     const cashbackDescription =
@@ -682,14 +688,16 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         }
         .dark-theme .empty { color: #cbd5e1 !important; }
         .dark-theme footer { color: #94a3b8 !important; }
-        @media (max-width: 760px) {
-          html, body, #root { overflow-x: hidden !important; }
-          .prakan-responsive-shell { display: grid !important; grid-template-columns: 1fr !important; gap: 14px !important; }
+
+        @media (max-width: 768px) {
+          .prakan-responsive-shell {
+            display: flex !important;
+            flex-direction: column !important;
+          }
           .prakan-calculator-panel { order: 1 !important; }
-          .prakan-presentation-panel { order: 2 !important; }
-          .prakan-result-panel { order: 3 !important; }
-          .form-grid { grid-template-columns: 1fr !important; }
-          .tabs { grid-template-columns: 1fr !important; }
+          .result-panel { order: 2 !important; }
+          .prakan-presentation-panel { order: 3 !important; }
+          #contact { order: 99 !important; }
         }
       `}</style>
 <section
@@ -774,7 +782,22 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
           {mode === "analyze" && (
             <>
-              <CashFlowChart rows={calc.rows} totalYears={totalYears} premium={premium} payYears={payYears} />
+              <div style={{
+                marginTop: "14px",
+                padding: "16px",
+                borderRadius: "18px",
+                background: "rgba(2,6,23,0.62)",
+                border: "1px solid rgba(200,169,110,0.28)",
+                color: "#E5E7EB"
+              }}>
+                <h2 style={{margin: "0 0 8px", color: "#F8FAFC"}}>ภาพรวมกระแสเงินสด</h2>
+                <p style={{margin: 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.65, fontSize: "14px"}}>
+                  กรอกข้อมูลทางขวา แล้วกราฟจะอัปเดตทันที ใช้สำหรับอธิบายลูกค้าให้เห็นภาพเงินจ่าย เงินคืน และเงินครบสัญญาแบบรายปี
+                </p>
+              </div>
+
+              <CashFlowChart rows={calc.rows} totalYears={totalYears} />
+              <CumulativeChart rows={calc.rows} totalYears={totalYears} />
 
               <div style={{
                 marginTop: "12px",
@@ -1104,8 +1127,13 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             <div>รวมเบี้ยที่จ่าย: <b>{money(calc.totalPremium)}</b> บาท</div>
             <div>รวมเงินคืนระหว่างทาง: <b>{money(calc.totalCashback)}</b> บาท</div>
             <div>เงินครบสัญญา: <b>{money(maturity)}</b> บาท</div>
-            <div>เงินปันผล/โบนัสคาดการณ์: <b>{money((dividendMode === "annual" ? Object.values(annualDividendCashflows).reduce((s, v) => s + v, 0) : dividend) + maturityBonus)}</b> บาท</div>
-
+            <div>เงินปันผล/โบนัสคาดการณ์: <b>{money(projectedDividendTotal)}</b> บาท</div>
+            <div style={{marginTop: "10px", paddingTop: "10px", borderTop: "1px solid rgba(200,169,110,0.22)", color: netDifference >= 0 ? "#86EFAC" : "#FCA5A5", fontWeight: 900}}>
+              กำไร/ส่วนต่างสุทธิ: <b>{money(netDifference)}</b> บาท
+            </div>
+            <div style={{marginTop: "4px", color: "rgba(255,255,255,0.58)", fontSize: "12px", lineHeight: 1.55}}>
+              คำนวณจาก (เงินคืนระหว่างทาง + เงินครบสัญญา + เงินปันผลคาดการณ์) - รวมเบี้ยที่จ่าย
+            </div>
 
             {hasCashback && (
               <div style={{marginTop: "10px", color: "#C8A96E", fontWeight: 800, lineHeight: 1.65}}>
@@ -1115,7 +1143,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           </div>
         </section>
 
-        <section className="panel result-panel prakan-result-panel">
+        <section className="panel result-panel">
           <h2>ผลวิเคราะห์</h2>
           {!result ? (
             <div className="empty">
@@ -1184,256 +1212,101 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 }
 
 
-function getPresentationRows(rows, totalYears, payYears, premium) {
-  const maxYear = Math.max(Number(totalYears || 0), 1);
-  const payEnd = Math.max(Number(payYears || 0), 0);
-  const yearSet = new Set();
-
-  // Always show payment years because these are the years clients care about most.
-  for (let year = 1; year <= Math.min(payEnd, maxYear); year++) {
-    yearSet.add(year);
-  }
-
-  // Add common milestone years so long policies do not create a very long page.
-  [10, 15, 20, 25, 30, 40, 50, 60, maxYear].forEach((year) => {
-    if (year >= 1 && year <= maxYear) yearSet.add(year);
-  });
-
-  return Array.from(yearSet)
-    .sort((a, b) => a - b)
-    .map((year) => {
-      const row = rows.find((item) => Number(item.year) === year) || { year };
-      const paidForDisplay = year >= 1 && year <= payEnd ? Number(premium || 0) : 0;
-      const receivedForDisplay =
-        (row.cashback || 0) +
-        (row.maturity || 0) +
-        (row.dividend || 0) +
-        (row.bonus || 0);
-
-      return {
-        ...row,
-        year,
-        paidForDisplay,
-        receivedForDisplay,
-      };
-    });
-}
-
-function CashFlowChart({ rows, totalYears, premium, payYears }) {
-  const graphRows = getPresentationRows(rows, totalYears, payYears, premium);
-  const maxYear = Math.max(Number(totalYears || 0), 1);
-  const shownYears = graphRows.map((row) => row.year);
-  const hiddenRanges = [];
-
-  for (let i = 0; i < shownYears.length - 1; i++) {
-    const from = shownYears[i] + 1;
-    const to = shownYears[i + 1] - 1;
-    if (to >= from) hiddenRanges.push(from === to ? `ปี ${from}` : `ปี ${from}-${to}`);
-  }
-
-  let cumulativeNet = 0;
-  const chartRows = graphRows.map((row) => {
-    cumulativeNet += (row.receivedForDisplay || 0) - (row.paidForDisplay || 0);
-    return { ...row, cumulativeNet };
-  });
-
-  const maxAbs = Math.max(
+function CashFlowChart({ rows, totalYears }) {
+  const visibleRows = rows.filter((row) => row.year > 0 && row.year <= Math.max(totalYears || 0, 1));
+  const maxValue = Math.max(
     1,
-    ...chartRows.flatMap((row) => [
-      Math.abs(row.paidForDisplay || 0),
-      Math.abs(row.receivedForDisplay || 0),
-      Math.abs(row.cumulativeNet || 0),
-    ])
+    ...visibleRows.map((row) => Math.max(row.paid || 0, (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0)))
   );
-
-  const width = Math.max(620, chartRows.length * 74);
-  const height = 320;
-  const left = 54;
-  const right = 28;
-  const top = 26;
-  const bottom = 46;
-  const plotW = width - left - right;
-  const plotH = height - top - bottom;
-  const zeroY = top + plotH * 0.5;
-  const scaleY = (value) => zeroY - (value / maxAbs) * (plotH * 0.42);
-  const xFor = (index) => left + (plotW / Math.max(chartRows.length - 1, 1)) * index;
-  const barW = Math.min(28, plotW / Math.max(chartRows.length, 1) * 0.34);
-  const linePoints = chartRows.map((row, index) => `${xFor(index)},${scaleY(row.cumulativeNet)}`).join(" ");
-
-  const statusFor = (row) => {
-    if (row.year <= Number(payYears || 0) && row.paidForDisplay > 0) return "ชำระเบี้ย";
-    if (row.year === maxYear) return "ครบสัญญา";
-    if (row.receivedForDisplay > 0) return "รับเงินคืน";
-    return "-";
-  };
 
   return (
     <div style={{
       marginTop: "14px",
-      padding: "18px",
-      borderRadius: "20px",
-      background: "linear-gradient(180deg, rgba(15,23,42,0.92), rgba(2,6,23,0.78))",
-      border: "1px solid rgba(200,169,110,0.24)",
-      boxShadow: "0 18px 44px rgba(0,0,0,0.24)",
-      overflow: "hidden"
+      padding: "16px",
+      borderRadius: "18px",
+      background: "rgba(2,6,23,0.58)",
+      border: "1px solid rgba(200,169,110,0.24)"
     }}>
-      <div style={{display: "flex", justifyContent: "space-between", gap: "12px", alignItems: "flex-start", marginBottom: "14px"}}>
-        <div>
-          <h3 style={{margin: "0 0 4px", color: "#F8FAFC", fontSize: "22px"}}>กราฟเงินเข้า-ออก รายปี</h3>
-          <div style={{fontSize: "13px", color: "rgba(255,255,255,0.68)", lineHeight: 1.6}}>
-            แสดงเฉพาะปีสำคัญ เพื่อใช้คุยกับลูกค้าได้ง่าย
-          </div>
-        </div>
-        <button type="button" style={{
-          border: "1px solid rgba(255,255,255,0.18)",
-          background: "rgba(255,255,255,0.05)",
-          color: "#E5E7EB",
-          borderRadius: "14px",
-          padding: "10px 12px",
-          fontWeight: 800,
-          whiteSpace: "nowrap"
-        }}>
-          ⓘ เกี่ยวกับกราฟ
-        </button>
+      <h3 style={{margin: "0 0 6px", color: "#F8FAFC"}}>กราฟเงินเข้า-ออก รายปี</h3>
+      <div style={{fontSize: "12px", color: "rgba(255,255,255,0.68)", marginBottom: "12px"}}>
+        แท่งแดง = เบี้ยที่จ่าย / แท่งทอง = เงินที่ได้รับ
       </div>
 
-      {chartRows.length === 0 ? (
+      {visibleRows.length === 0 ? (
         <div style={{padding: "22px", borderRadius: "14px", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.72)", textAlign: "center"}}>
           กรอกปีครบสัญญา เพื่อแสดงกราฟรายปี
         </div>
       ) : (
-        <>
-          <div style={{display: "flex", gap: "18px", flexWrap: "wrap", alignItems: "center", justifyContent: "center", marginBottom: "10px", fontSize: "12px", color: "rgba(255,255,255,0.78)"}}>
-            <span><b style={{color: "#EF4444"}}>▬</b> เบี้ยจ่าย</span>
-            <span><b style={{color: "#22C55E"}}>▬</b> เงินรับ</span>
-            <span><b style={{color: "#3B82F6"}}>━</b> เงินสะสมสุทธิ</span>
-          </div>
+        <div style={{display: "flex", gap: "8px", alignItems: "flex-end", overflowX: "auto", paddingBottom: "8px", minHeight: "220px"}}>
+          {visibleRows.map((row) => {
+            const paidHeight = Math.max(4, ((row.paid || 0) / maxValue) * 120);
+            const received = (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0);
+            const receiveHeight = Math.max(4, (received / maxValue) * 120);
+            return (
+              <div key={row.year} style={{minWidth: "42px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end"}} title={`ปี ${row.year}`}>
+                <div style={{height: "132px", display: "flex", alignItems: "flex-end", gap: "3px"}}>
+                  <div style={{width: "15px", height: `${paidHeight}px`, borderRadius: "8px 8px 3px 3px", background: row.paid > 0 ? "#EF4444" : "rgba(255,255,255,0.10)"}} />
+                  <div style={{width: "15px", height: `${receiveHeight}px`, borderRadius: "8px 8px 3px 3px", background: received > 0 ? "linear-gradient(180deg, #F8D978, #C8A96E)" : "rgba(255,255,255,0.10)"}} />
+                </div>
+                <div style={{fontSize: "11px", color: "rgba(255,255,255,0.65)", marginTop: "8px"}}>ปี {row.year}</div>
+                <div style={{fontSize: "10px", color: "rgba(255,255,255,0.50)"}}>{received > 0 ? money(received) : "-"}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
-          <div style={{overflowX: "auto", paddingBottom: "8px"}}>
-            <svg viewBox={`0 0 ${width} ${height}`} width="100%" height="340" style={{minWidth: "620px", display: "block"}} role="img" aria-label="กราฟเงินเข้าออก">
-              <defs>
-                <linearGradient id="prakanReceiveGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#B7F36B" />
-                  <stop offset="100%" stopColor="#22C55E" />
-                </linearGradient>
-                <linearGradient id="prakanPayGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#FB7185" />
-                  <stop offset="100%" stopColor="#EF4444" />
-                </linearGradient>
-              </defs>
+function CumulativeChart({ rows, totalYears }) {
+  const visibleRows = rows.filter((row) => row.year > 0 && row.year <= Math.max(totalYears || 0, 1));
+  let paidSum = 0;
+  let receivedSum = 0;
+  const data = visibleRows.map((row) => {
+    paidSum += row.paid || 0;
+    receivedSum += (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0);
+    return { year: row.year, paidSum, receivedSum };
+  });
+  const maxValue = Math.max(1, ...data.map((row) => Math.max(row.paidSum, row.receivedSum)));
 
-              {[ -1, -0.5, 0, 0.5, 1 ].map((tick) => {
-                const y = zeroY - tick * (plotH * 0.42);
-                return <line key={tick} x1={left} x2={width - right} y1={y} y2={y} stroke="rgba(255,255,255,0.08)" strokeWidth="1" />;
-              })}
-              <line x1={left} x2={width - right} y1={zeroY} y2={zeroY} stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" />
-              <line x1={left} x2={left} y1={top} y2={height - bottom} stroke="rgba(255,255,255,0.20)" strokeWidth="1" />
-              <text x={left - 8} y={top + 4} fill="rgba(255,255,255,0.65)" fontSize="11" textAnchor="end">บาท</text>
+  return (
+    <div style={{
+      marginTop: "14px",
+      padding: "16px",
+      borderRadius: "18px",
+      background: "rgba(2,6,23,0.58)",
+      border: "1px solid rgba(200,169,110,0.24)"
+    }}>
+      <h3 style={{margin: "0 0 6px", color: "#F8FAFC"}}>กราฟสะสม</h3>
+      <div style={{fontSize: "12px", color: "rgba(255,255,255,0.68)", marginBottom: "12px"}}>
+        แสดงเบี้ยสะสมเทียบกับเงินรับสะสมตามข้อมูลที่กรอก
+      </div>
 
-              {chartRows.map((row, index) => {
-                const x = xFor(index);
-                const paid = row.paidForDisplay || 0;
-                const receive = row.receivedForDisplay || 0;
-                const paidY = scaleY(-paid);
-                const receiveY = scaleY(receive);
-                return (
-                  <g key={row.year}>
-                    {paid > 0 && (
-                      <>
-                        <rect x={x - barW - 3} y={zeroY} width={barW} height={paidY - zeroY} rx="5" fill="url(#prakanPayGradient)" />
-                        <text x={x - barW / 2 - 3} y={paidY + 16} fill="#FCA5A5" fontSize="11" textAnchor="middle">-{money(paid)}</text>
-                      </>
-                    )}
-                    {receive > 0 && (
-                      <>
-                        <rect x={x + 3} y={receiveY} width={barW} height={zeroY - receiveY} rx="5" fill="url(#prakanReceiveGradient)" />
-                        <text x={x + barW / 2 + 3} y={receiveY - 8} fill="#BBF7D0" fontSize="11" textAnchor="middle">{money(receive)}</text>
-                      </>
-                    )}
-                    <text x={x} y={height - 18} fill="rgba(255,255,255,0.80)" fontSize="12" textAnchor="middle" fontWeight="700">{row.year}</text>
-                  </g>
-                );
-              })}
-
-              <polyline points={linePoints} fill="none" stroke="#3B82F6" strokeWidth="2.4" />
-              {chartRows.map((row, index) => {
-                const x = xFor(index);
-                const y = scaleY(row.cumulativeNet);
-                return (
-                  <g key={`line-${row.year}`}>
-                    <circle cx={x} cy={y} r="4" fill="#60A5FA" stroke="#0F172A" strokeWidth="2" />
-                    <text x={x} y={y + (row.cumulativeNet < 0 ? 20 : -10)} fill={row.cumulativeNet < 0 ? "#FCA5A5" : "#93C5FD"} fontSize="11" textAnchor="middle" fontWeight="700">
-                      {money(row.cumulativeNet)}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
-
-          {hiddenRanges.length > 0 && (
-            <div style={{
-              marginTop: "8px",
-              padding: "10px 12px",
-              borderRadius: "12px",
-              border: "1px solid rgba(200,169,110,0.24)",
-              background: "rgba(255,255,255,0.04)",
-              color: "rgba(255,255,255,0.72)",
-              fontSize: "12px",
-              lineHeight: 1.55
-            }}>
-              หมายเหตุ: แสดงเฉพาะปีสำคัญจากทั้งหมด {maxYear} ปี เพื่อความกระชับ
+      {data.length === 0 ? (
+        <div style={{padding: "22px", borderRadius: "14px", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.72)", textAlign: "center"}}>
+          ยังไม่มีข้อมูลสำหรับกราฟสะสม
+        </div>
+      ) : (
+        <div style={{display: "grid", gap: "10px"}}>
+          {data.map((row) => (
+            <div key={row.year} style={{display: "grid", gridTemplateColumns: "54px 1fr", gap: "8px", alignItems: "center"}}>
+              <div style={{fontSize: "12px", color: "rgba(255,255,255,0.72)"}}>ปี {row.year}</div>
+              <div>
+                <div style={{height: "10px", borderRadius: "99px", background: "rgba(255,255,255,0.10)", overflow: "hidden", marginBottom: "4px"}}>
+                  <div style={{width: `${Math.min(100, (row.paidSum / maxValue) * 100)}%`, height: "100%", background: "#EF4444"}} />
+                </div>
+                <div style={{height: "10px", borderRadius: "99px", background: "rgba(255,255,255,0.10)", overflow: "hidden"}}>
+                  <div style={{width: `${Math.min(100, (row.receivedSum / maxValue) * 100)}%`, height: "100%", background: "linear-gradient(90deg, #C8A96E, #F8D978)"}} />
+                </div>
+              </div>
             </div>
-          )}
-
-          <div style={{marginTop: "16px"}}>
-            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", marginBottom: "10px"}}>
-              <h3 style={{margin: 0, color: "#F8FAFC", fontSize: "18px"}}>รายละเอียดกระแสเงินสดรายปี</h3>
-              <button type="button" style={{
-                border: "1px solid rgba(255,255,255,0.16)",
-                background: "rgba(255,255,255,0.05)",
-                color: "#E5E7EB",
-                borderRadius: "12px",
-                padding: "9px 12px",
-                fontWeight: 800
-              }}>⬇ ดาวน์โหลดตาราง</button>
-            </div>
-            <div style={{overflowX: "auto", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)"}}>
-              <table style={{width: "100%", minWidth: "620px", borderCollapse: "collapse", color: "#E5E7EB", fontSize: "13px"}}>
-                <thead>
-                  <tr style={{background: "rgba(255,255,255,0.06)"}}>
-                    <th style={{padding: "10px", textAlign: "center"}}>ปีกรมธรรม์</th>
-                    <th style={{padding: "10px", textAlign: "center"}}>สถานะ</th>
-                    <th style={{padding: "10px", textAlign: "right"}}>เบี้ยจ่าย</th>
-                    <th style={{padding: "10px", textAlign: "right"}}>เงินรับ</th>
-                    <th style={{padding: "10px", textAlign: "right"}}>เงินสะสมสุทธิ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {chartRows.map((row) => (
-                    <tr key={`table-${row.year}`} style={{borderTop: "1px solid rgba(255,255,255,0.06)"}}>
-                      <td style={{padding: "9px", textAlign: "center", fontWeight: 800}}>{row.year}</td>
-                      <td style={{padding: "9px", textAlign: "center"}}>
-                        <span style={{
-                          display: "inline-block",
-                          padding: "5px 9px",
-                          borderRadius: "999px",
-                          background: statusFor(row) === "ชำระเบี้ย" ? "rgba(239,68,68,0.22)" : statusFor(row) === "ครบสัญญา" ? "rgba(59,130,246,0.22)" : "rgba(34,197,94,0.22)",
-                          color: statusFor(row) === "ชำระเบี้ย" ? "#FCA5A5" : statusFor(row) === "ครบสัญญา" ? "#93C5FD" : "#86EFAC",
-                          fontWeight: 800,
-                          fontSize: "12px"
-                        }}>{statusFor(row)}</span>
-                      </td>
-                      <td style={{padding: "9px", textAlign: "right", color: row.paidForDisplay > 0 ? "#FCA5A5" : "rgba(255,255,255,0.62)", fontWeight: 800}}>{row.paidForDisplay > 0 ? `-${money(row.paidForDisplay)}` : "0"}</td>
-                      <td style={{padding: "9px", textAlign: "right", color: row.receivedForDisplay > 0 ? "#86EFAC" : "rgba(255,255,255,0.62)", fontWeight: 800}}>{money(row.receivedForDisplay || 0)}</td>
-                      <td style={{padding: "9px", textAlign: "right", color: row.cumulativeNet < 0 ? "#FCA5A5" : "#93C5FD", fontWeight: 900}}>{money(row.cumulativeNet)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          ))}
+          <div style={{display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "4px", fontSize: "12px", color: "rgba(255,255,255,0.72)"}}>
+            <span>■ เบี้ยสะสม</span>
+            <span style={{color: "#F8D978"}}>■ เงินรับสะสม</span>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
