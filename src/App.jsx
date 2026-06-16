@@ -759,7 +759,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               <FileText size={16} /> 📊 กราฟนำเสนอ
             </button>
             <button className={mode === "compare" ? "active" : ""} onClick={() => setMode("compare")}>
-              <Scale size={16} /> AI วิเคราะห์เอกสาร
+              <Scale size={16} /> วิเคราะห์เอกสาร
             </button>
           </div>
 
@@ -786,8 +786,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                 <Metric title="IRR รวมคาดการณ์" value={`${Number.isFinite(calc.projectedIRR) ? calc.projectedIRR.toFixed(2) : "-"}%`} />
               </div>
 
-              <CashFlowChart rows={calc.rows} totalYears={totalYears} />
-              <CumulativeChart rows={calc.rows} totalYears={totalYears} />
+              <CashFlowChart rows={calc.rows} totalYears={totalYears} premium={premium} payYears={payYears} />
+              <CumulativeChart rows={calc.rows} totalYears={totalYears} premium={premium} payYears={payYears} />
 
               <div style={{
                 marginTop: "12px",
@@ -816,7 +816,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                 <FileText size={34} style={{color: "#C8A96E", marginBottom: "10px"}} />
                 <h2 style={{margin: "0 0 8px", color: "#F8FAFC"}}>ยังไม่เปิดให้บริการ</h2>
                 <p style={{margin: 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.7}}>
-                  ฟีเจอร์อัปโหลด PDF / รูปภาพ และ AI วิเคราะห์เอกสาร จะถูกแยกมาไว้หน้านี้ในเวอร์ชันถัดไป เพื่อไม่ให้รบกวนเครื่องมือคำนวณหลัก
+                  กำลังพัฒนา
                 </p>
               </div>
 
@@ -1197,11 +1197,15 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 }
 
 
-function CashFlowChart({ rows, totalYears }) {
+function CashFlowChart({ rows, totalYears, premium, payYears }) {
   const visibleRows = rows.filter((row) => row.year > 0 && row.year <= Math.max(totalYears || 0, 1));
   const maxValue = Math.max(
     1,
-    ...visibleRows.map((row) => Math.max(row.paid || 0, (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0)))
+    ...visibleRows.map((row) => {
+      const paidForGraph = row.year >= 1 && row.year <= Number(payYears || 0) ? Number(premium || 0) : 0;
+      const received = (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0);
+      return Math.max(paidForGraph, received);
+    })
   );
 
   return (
@@ -1224,13 +1228,14 @@ function CashFlowChart({ rows, totalYears }) {
       ) : (
         <div style={{display: "flex", gap: "8px", alignItems: "flex-end", overflowX: "auto", paddingBottom: "8px", minHeight: "220px"}}>
           {visibleRows.map((row) => {
-            const paidHeight = Math.max(4, ((row.paid || 0) / maxValue) * 120);
+            const paidForGraph = row.year >= 1 && row.year <= Number(payYears || 0) ? Number(premium || 0) : 0;
+            const paidHeight = Math.max(4, (paidForGraph / maxValue) * 120);
             const received = (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0);
             const receiveHeight = Math.max(4, (received / maxValue) * 120);
             return (
               <div key={row.year} style={{minWidth: "42px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end"}} title={`ปี ${row.year}`}>
                 <div style={{height: "132px", display: "flex", alignItems: "flex-end", gap: "3px"}}>
-                  <div style={{width: "15px", height: `${paidHeight}px`, borderRadius: "8px 8px 3px 3px", background: row.paid > 0 ? "#EF4444" : "rgba(255,255,255,0.10)"}} />
+                  <div style={{width: "15px", height: `${paidHeight}px`, borderRadius: "8px 8px 3px 3px", background: paidForGraph > 0 ? "#EF4444" : "rgba(255,255,255,0.10)"}} />
                   <div style={{width: "15px", height: `${receiveHeight}px`, borderRadius: "8px 8px 3px 3px", background: received > 0 ? "linear-gradient(180deg, #F8D978, #C8A96E)" : "rgba(255,255,255,0.10)"}} />
                 </div>
                 <div style={{fontSize: "11px", color: "rgba(255,255,255,0.65)", marginTop: "8px"}}>ปี {row.year}</div>
@@ -1244,12 +1249,13 @@ function CashFlowChart({ rows, totalYears }) {
   );
 }
 
-function CumulativeChart({ rows, totalYears }) {
+function CumulativeChart({ rows, totalYears, premium, payYears }) {
   const visibleRows = rows.filter((row) => row.year > 0 && row.year <= Math.max(totalYears || 0, 1));
   let paidSum = 0;
   let receivedSum = 0;
   const data = visibleRows.map((row) => {
-    paidSum += row.paid || 0;
+    const paidForGraph = row.year >= 1 && row.year <= Number(payYears || 0) ? Number(premium || 0) : 0;
+    paidSum += paidForGraph;
     receivedSum += (row.cashback || 0) + (row.maturity || 0) + (row.dividend || 0) + (row.bonus || 0);
     return { year: row.year, paidSum, receivedSum };
   });
@@ -1308,7 +1314,7 @@ function DisabledFeatureCard({ title, detail }) {
     }}>
       <div style={{display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center"}}>
         <div style={{fontWeight: 900, color: "#F8FAFC"}}>{title}</div>
-        <span style={{fontSize: "12px", padding: "6px 10px", borderRadius: "999px", background: "rgba(239,68,68,0.18)", color: "#FCA5A5", border: "1px solid rgba(239,68,68,0.35)"}}>ยังไม่เปิดให้บริการ</span>
+        <span style={{fontSize: "12px", padding: "6px 10px", borderRadius: "999px", background: "rgba(239,68,68,0.18)", color: "#FCA5A5", border: "1px solid rgba(239,68,68,0.35)"}}>เร็ว ๆ นี้</span>
       </div>
       <div style={{marginTop: "8px", color: "rgba(255,255,255,0.68)", fontSize: "13px", lineHeight: 1.6}}>{detail}</div>
     </div>
