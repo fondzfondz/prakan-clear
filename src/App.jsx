@@ -1121,51 +1121,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             )}
           </div>
         </section>
-
-        <section className="panel result-panel">
-          <h2>ผลวิเคราะห์</h2>
-          {!result ? (
-            <div className="empty">
-              <AlertTriangle size={28} />
-              <p>กรอกข้อมูลหรืออัปโหลดไฟล์ แล้วกด “สร้างผลวิเคราะห์”</p>
-            </div>
-          ) : (
-            <>
-              <pre>{result}</pre>
-              <button
-                onClick={downloadReport}
-                style={{
-                  marginTop: "14px",
-                  width: "100%",
-                  border: "none",
-                  borderRadius: "14px",
-                  padding: "13px 16px",
-                  background: "linear-gradient(135deg, #C8A96E, #A77E35)",
-                  color: "#07111f",
-                  fontWeight: 800,
-                  cursor: "pointer"
-                }}
-              >
-                📥 ดาวน์โหลดรายงาน
-              </button>
-              <FeedbackPoll feedback={feedback} setFeedback={setFeedback} />
-              <div style={{
-                marginTop: "14px",
-                padding: "14px",
-                borderRadius: "14px",
-                background: "#F8FAFC",
-                border: "1px solid #E2E8F0",
-                color: "#475569",
-                fontSize: "13px",
-                lineHeight: 1.6
-              }}>
-                {FULL_DISCLAIMER}
-              </div>
-            </>
-          )}
-        </section>
-      
-        <section id="contact" className="panel" style={{
+<section id="contact" className="panel" style={{
           gridColumn: "1 / -1",
           textAlign: "center"
         }}>
@@ -1231,7 +1187,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
         ภาพรวมจากข้อมูลที่กรอก แสดงสัดส่วนเบี้ยที่จ่าย เงินคืน เงินครบสัญญา และส่วนต่างสุทธิ
       </p>
 
-      <div style={{display: "grid", gridTemplateColumns: "minmax(220px, 0.9fr) minmax(260px, 1.1fr)", gap: "18px", alignItems: "center"}} className="prakan-donut-wrap">
+      <div style={{display: "flex", flexDirection: "column", gap: "18px", alignItems: "center"}} className="prakan-donut-wrap">
         <div style={{display: "grid", placeItems: "center"}}>
           <div style={{
             width: "min(280px, 72vw)",
@@ -1261,7 +1217,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
           </div>
         </div>
 
-        <div style={{display: "grid", gap: "10px"}}>
+        <div style={{display: "grid", gap: "10px", width: "100%"}}>
           {displayItems.map((item) => {
             const shownValue = item.key === "net" ? Number(item.rawValue || 0) : Number(item.value || 0);
             return (
