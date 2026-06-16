@@ -682,6 +682,15 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         }
         .dark-theme .empty { color: #cbd5e1 !important; }
         .dark-theme footer { color: #94a3b8 !important; }
+        @media (max-width: 760px) {
+          html, body, #root { overflow-x: hidden !important; }
+          .prakan-responsive-shell { display: grid !important; grid-template-columns: 1fr !important; gap: 14px !important; }
+          .prakan-calculator-panel { order: 1 !important; }
+          .prakan-presentation-panel { order: 2 !important; }
+          .prakan-result-panel { order: 3 !important; }
+          .form-grid { grid-template-columns: 1fr !important; }
+          .tabs { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 <section
           style={{
@@ -765,13 +774,6 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
           {mode === "analyze" && (
             <>
-              <div style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", marginTop: "12px"}}>
-                <Metric title="รวมเบี้ยที่จ่าย" value={`${money(calc.totalPremium)} บาท`} />
-                <Metric title="เงินคืนรวม" value={`${money(calc.totalCashback)} บาท`} />
-                <Metric title="IRR รับประกัน" value={`${Number.isFinite(calc.guaranteedIRR) ? calc.guaranteedIRR.toFixed(2) : "-"}%`} />
-                <Metric title="IRR รวมคาดการณ์" value={`${Number.isFinite(calc.projectedIRR) ? calc.projectedIRR.toFixed(2) : "-"}%`} />
-              </div>
-
               <CashFlowChart rows={calc.rows} totalYears={totalYears} premium={premium} payYears={payYears} />
 
               <div style={{
@@ -814,7 +816,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           )}
         </section>
 
-        <section className="panel">
+        <section className="panel prakan-calculator-panel">
           <h2>เครื่องคำนวณและกรอกข้อมูล</h2>
           <p className="muted">กรอกข้อมูลจากใบเสนอขายประกัน แล้วระบบจะคำนวณ IRR และสร้างผลวิเคราะห์อัตโนมัติ</p>
 
@@ -1113,7 +1115,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           </div>
         </section>
 
-        <section className="panel result-panel">
+        <section className="panel result-panel prakan-result-panel">
           <h2>ผลวิเคราะห์</h2>
           {!result ? (
             <div className="empty">
@@ -1229,82 +1231,209 @@ function CashFlowChart({ rows, totalYears, premium, payYears }) {
     if (to >= from) hiddenRanges.push(from === to ? `ปี ${from}` : `ปี ${from}-${to}`);
   }
 
-  const maxValue = Math.max(
+  let cumulativeNet = 0;
+  const chartRows = graphRows.map((row) => {
+    cumulativeNet += (row.receivedForDisplay || 0) - (row.paidForDisplay || 0);
+    return { ...row, cumulativeNet };
+  });
+
+  const maxAbs = Math.max(
     1,
-    ...graphRows.map((row) => Math.max(row.paidForDisplay || 0, row.receivedForDisplay || 0))
+    ...chartRows.flatMap((row) => [
+      Math.abs(row.paidForDisplay || 0),
+      Math.abs(row.receivedForDisplay || 0),
+      Math.abs(row.cumulativeNet || 0),
+    ])
   );
+
+  const width = Math.max(620, chartRows.length * 74);
+  const height = 320;
+  const left = 54;
+  const right = 28;
+  const top = 26;
+  const bottom = 46;
+  const plotW = width - left - right;
+  const plotH = height - top - bottom;
+  const zeroY = top + plotH * 0.5;
+  const scaleY = (value) => zeroY - (value / maxAbs) * (plotH * 0.42);
+  const xFor = (index) => left + (plotW / Math.max(chartRows.length - 1, 1)) * index;
+  const barW = Math.min(28, plotW / Math.max(chartRows.length, 1) * 0.34);
+  const linePoints = chartRows.map((row, index) => `${xFor(index)},${scaleY(row.cumulativeNet)}`).join(" ");
+
+  const statusFor = (row) => {
+    if (row.year <= Number(payYears || 0) && row.paidForDisplay > 0) return "ชำระเบี้ย";
+    if (row.year === maxYear) return "ครบสัญญา";
+    if (row.receivedForDisplay > 0) return "รับเงินคืน";
+    return "-";
+  };
 
   return (
     <div style={{
       marginTop: "14px",
-      padding: "16px",
-      borderRadius: "18px",
-      background: "rgba(2,6,23,0.58)",
-      border: "1px solid rgba(200,169,110,0.24)"
+      padding: "18px",
+      borderRadius: "20px",
+      background: "linear-gradient(180deg, rgba(15,23,42,0.92), rgba(2,6,23,0.78))",
+      border: "1px solid rgba(200,169,110,0.24)",
+      boxShadow: "0 18px 44px rgba(0,0,0,0.24)",
+      overflow: "hidden"
     }}>
-      <h3 style={{margin: "0 0 6px", color: "#F8FAFC"}}>กราฟเงินเข้า-ออก รายปี</h3>
-      <div style={{fontSize: "12px", color: "rgba(255,255,255,0.68)", marginBottom: "12px", lineHeight: 1.6}}>
-        แดง = เบี้ยที่จ่าย / ทอง = เงินที่ได้รับ / แสดงเฉพาะปีสำคัญเพื่อให้อ่านง่าย
+      <div style={{display: "flex", justifyContent: "space-between", gap: "12px", alignItems: "flex-start", marginBottom: "14px"}}>
+        <div>
+          <h3 style={{margin: "0 0 4px", color: "#F8FAFC", fontSize: "22px"}}>กราฟเงินเข้า-ออก รายปี</h3>
+          <div style={{fontSize: "13px", color: "rgba(255,255,255,0.68)", lineHeight: 1.6}}>
+            แสดงเฉพาะปีสำคัญ เพื่อใช้คุยกับลูกค้าได้ง่าย
+          </div>
+        </div>
+        <button type="button" style={{
+          border: "1px solid rgba(255,255,255,0.18)",
+          background: "rgba(255,255,255,0.05)",
+          color: "#E5E7EB",
+          borderRadius: "14px",
+          padding: "10px 12px",
+          fontWeight: 800,
+          whiteSpace: "nowrap"
+        }}>
+          ⓘ เกี่ยวกับกราฟ
+        </button>
       </div>
 
-      {graphRows.length === 0 ? (
+      {chartRows.length === 0 ? (
         <div style={{padding: "22px", borderRadius: "14px", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.72)", textAlign: "center"}}>
           กรอกปีครบสัญญา เพื่อแสดงกราฟรายปี
         </div>
       ) : (
-        <div style={{display: "grid", gap: "10px"}}>
-          {graphRows.map((row) => {
-            const paidWidth = Math.min(100, ((row.paidForDisplay || 0) / maxValue) * 100);
-            const receiveWidth = Math.min(100, ((row.receivedForDisplay || 0) / maxValue) * 100);
-            return (
-              <div key={row.year} style={{
-                display: "grid",
-                gridTemplateColumns: "54px 1fr 78px",
-                gap: "10px",
-                alignItems: "center",
-                padding: "10px",
-                borderRadius: "14px",
-                background: "rgba(255,255,255,0.045)",
-                border: "1px solid rgba(255,255,255,0.07)"
-              }}>
-                <div style={{fontWeight: 900, color: "#E5E7EB", fontSize: "13px"}}>ปี {row.year}</div>
-                <div style={{display: "grid", gap: "6px"}}>
-                  <div style={{display: "grid", gridTemplateColumns: "58px 1fr", gap: "8px", alignItems: "center"}}>
-                    <span style={{fontSize: "11px", color: "rgba(255,255,255,0.62)"}}>เบี้ยจ่าย</span>
-                    <div style={{height: "10px", borderRadius: "999px", background: "rgba(255,255,255,0.10)", overflow: "hidden"}}>
-                      <div style={{width: `${paidWidth}%`, height: "100%", borderRadius: "999px", background: row.paidForDisplay > 0 ? "#EF4444" : "transparent"}} />
-                    </div>
-                  </div>
-                  <div style={{display: "grid", gridTemplateColumns: "58px 1fr", gap: "8px", alignItems: "center"}}>
-                    <span style={{fontSize: "11px", color: "rgba(255,255,255,0.62)"}}>เงินรับ</span>
-                    <div style={{height: "10px", borderRadius: "999px", background: "rgba(255,255,255,0.10)", overflow: "hidden"}}>
-                      <div style={{width: `${receiveWidth}%`, height: "100%", borderRadius: "999px", background: row.receivedForDisplay > 0 ? "linear-gradient(90deg, #C8A96E, #F8D978)" : "transparent"}} />
-                    </div>
-                  </div>
-                </div>
-                <div style={{fontSize: "11px", color: "rgba(255,255,255,0.62)", textAlign: "right", lineHeight: 1.45}}>
-                  <div>{row.paidForDisplay > 0 ? money(row.paidForDisplay) : "-"}</div>
-                  <div style={{color: row.receivedForDisplay > 0 ? "#F8D978" : "rgba(255,255,255,0.45)"}}>{row.receivedForDisplay > 0 ? money(row.receivedForDisplay) : "-"}</div>
-                </div>
-              </div>
-            );
-          })}
+        <>
+          <div style={{display: "flex", gap: "18px", flexWrap: "wrap", alignItems: "center", justifyContent: "center", marginBottom: "10px", fontSize: "12px", color: "rgba(255,255,255,0.78)"}}>
+            <span><b style={{color: "#EF4444"}}>▬</b> เบี้ยจ่าย</span>
+            <span><b style={{color: "#22C55E"}}>▬</b> เงินรับ</span>
+            <span><b style={{color: "#3B82F6"}}>━</b> เงินสะสมสุทธิ</span>
+          </div>
+
+          <div style={{overflowX: "auto", paddingBottom: "8px"}}>
+            <svg viewBox={`0 0 ${width} ${height}`} width="100%" height="340" style={{minWidth: "620px", display: "block"}} role="img" aria-label="กราฟเงินเข้าออก">
+              <defs>
+                <linearGradient id="prakanReceiveGradient" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="#B7F36B" />
+                  <stop offset="100%" stopColor="#22C55E" />
+                </linearGradient>
+                <linearGradient id="prakanPayGradient" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="#FB7185" />
+                  <stop offset="100%" stopColor="#EF4444" />
+                </linearGradient>
+              </defs>
+
+              {[ -1, -0.5, 0, 0.5, 1 ].map((tick) => {
+                const y = zeroY - tick * (plotH * 0.42);
+                return <line key={tick} x1={left} x2={width - right} y1={y} y2={y} stroke="rgba(255,255,255,0.08)" strokeWidth="1" />;
+              })}
+              <line x1={left} x2={width - right} y1={zeroY} y2={zeroY} stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" />
+              <line x1={left} x2={left} y1={top} y2={height - bottom} stroke="rgba(255,255,255,0.20)" strokeWidth="1" />
+              <text x={left - 8} y={top + 4} fill="rgba(255,255,255,0.65)" fontSize="11" textAnchor="end">บาท</text>
+
+              {chartRows.map((row, index) => {
+                const x = xFor(index);
+                const paid = row.paidForDisplay || 0;
+                const receive = row.receivedForDisplay || 0;
+                const paidY = scaleY(-paid);
+                const receiveY = scaleY(receive);
+                return (
+                  <g key={row.year}>
+                    {paid > 0 && (
+                      <>
+                        <rect x={x - barW - 3} y={zeroY} width={barW} height={paidY - zeroY} rx="5" fill="url(#prakanPayGradient)" />
+                        <text x={x - barW / 2 - 3} y={paidY + 16} fill="#FCA5A5" fontSize="11" textAnchor="middle">-{money(paid)}</text>
+                      </>
+                    )}
+                    {receive > 0 && (
+                      <>
+                        <rect x={x + 3} y={receiveY} width={barW} height={zeroY - receiveY} rx="5" fill="url(#prakanReceiveGradient)" />
+                        <text x={x + barW / 2 + 3} y={receiveY - 8} fill="#BBF7D0" fontSize="11" textAnchor="middle">{money(receive)}</text>
+                      </>
+                    )}
+                    <text x={x} y={height - 18} fill="rgba(255,255,255,0.80)" fontSize="12" textAnchor="middle" fontWeight="700">{row.year}</text>
+                  </g>
+                );
+              })}
+
+              <polyline points={linePoints} fill="none" stroke="#3B82F6" strokeWidth="2.4" />
+              {chartRows.map((row, index) => {
+                const x = xFor(index);
+                const y = scaleY(row.cumulativeNet);
+                return (
+                  <g key={`line-${row.year}`}>
+                    <circle cx={x} cy={y} r="4" fill="#60A5FA" stroke="#0F172A" strokeWidth="2" />
+                    <text x={x} y={y + (row.cumulativeNet < 0 ? 20 : -10)} fill={row.cumulativeNet < 0 ? "#FCA5A5" : "#93C5FD"} fontSize="11" textAnchor="middle" fontWeight="700">
+                      {money(row.cumulativeNet)}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
 
           {hiddenRanges.length > 0 && (
             <div style={{
-              marginTop: "4px",
+              marginTop: "8px",
               padding: "10px 12px",
               borderRadius: "12px",
-              border: "1px solid rgba(239,68,68,0.28)",
-              background: "rgba(239,68,68,0.10)",
-              color: "#FCA5A5",
+              border: "1px solid rgba(200,169,110,0.24)",
+              background: "rgba(255,255,255,0.04)",
+              color: "rgba(255,255,255,0.72)",
               fontSize: "12px",
               lineHeight: 1.55
             }}>
-              แสดงเฉพาะปีสำคัญจากทั้งหมด {maxYear} ปี โดยซ่อน {hiddenRanges.slice(0, 4).join(", ")}{hiddenRanges.length > 4 ? " ..." : ""} เพื่อให้กราฟกระชับ
+              หมายเหตุ: แสดงเฉพาะปีสำคัญจากทั้งหมด {maxYear} ปี เพื่อความกระชับ
             </div>
           )}
-        </div>
+
+          <div style={{marginTop: "16px"}}>
+            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", marginBottom: "10px"}}>
+              <h3 style={{margin: 0, color: "#F8FAFC", fontSize: "18px"}}>รายละเอียดกระแสเงินสดรายปี</h3>
+              <button type="button" style={{
+                border: "1px solid rgba(255,255,255,0.16)",
+                background: "rgba(255,255,255,0.05)",
+                color: "#E5E7EB",
+                borderRadius: "12px",
+                padding: "9px 12px",
+                fontWeight: 800
+              }}>⬇ ดาวน์โหลดตาราง</button>
+            </div>
+            <div style={{overflowX: "auto", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)"}}>
+              <table style={{width: "100%", minWidth: "620px", borderCollapse: "collapse", color: "#E5E7EB", fontSize: "13px"}}>
+                <thead>
+                  <tr style={{background: "rgba(255,255,255,0.06)"}}>
+                    <th style={{padding: "10px", textAlign: "center"}}>ปีกรมธรรม์</th>
+                    <th style={{padding: "10px", textAlign: "center"}}>สถานะ</th>
+                    <th style={{padding: "10px", textAlign: "right"}}>เบี้ยจ่าย</th>
+                    <th style={{padding: "10px", textAlign: "right"}}>เงินรับ</th>
+                    <th style={{padding: "10px", textAlign: "right"}}>เงินสะสมสุทธิ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {chartRows.map((row) => (
+                    <tr key={`table-${row.year}`} style={{borderTop: "1px solid rgba(255,255,255,0.06)"}}>
+                      <td style={{padding: "9px", textAlign: "center", fontWeight: 800}}>{row.year}</td>
+                      <td style={{padding: "9px", textAlign: "center"}}>
+                        <span style={{
+                          display: "inline-block",
+                          padding: "5px 9px",
+                          borderRadius: "999px",
+                          background: statusFor(row) === "ชำระเบี้ย" ? "rgba(239,68,68,0.22)" : statusFor(row) === "ครบสัญญา" ? "rgba(59,130,246,0.22)" : "rgba(34,197,94,0.22)",
+                          color: statusFor(row) === "ชำระเบี้ย" ? "#FCA5A5" : statusFor(row) === "ครบสัญญา" ? "#93C5FD" : "#86EFAC",
+                          fontWeight: 800,
+                          fontSize: "12px"
+                        }}>{statusFor(row)}</span>
+                      </td>
+                      <td style={{padding: "9px", textAlign: "right", color: row.paidForDisplay > 0 ? "#FCA5A5" : "rgba(255,255,255,0.62)", fontWeight: 800}}>{row.paidForDisplay > 0 ? `-${money(row.paidForDisplay)}` : "0"}</td>
+                      <td style={{padding: "9px", textAlign: "right", color: row.receivedForDisplay > 0 ? "#86EFAC" : "rgba(255,255,255,0.62)", fontWeight: 800}}>{money(row.receivedForDisplay || 0)}</td>
+                      <td style={{padding: "9px", textAlign: "right", color: row.cumulativeNet < 0 ? "#FCA5A5" : "#93C5FD", fontWeight: 900}}>{money(row.cumulativeNet)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
