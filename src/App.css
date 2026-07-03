@@ -546,4 +546,9 @@ body > div #root .hero,
     padding: 56px 24px 48px !important;
     transform: none !important;
   }
+
+  .deposit-input-grid,
+  .deposit-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

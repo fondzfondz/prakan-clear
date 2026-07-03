@@ -1288,7 +1288,190 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
       }}>
         หมายเหตุ: เปอร์เซ็นต์ในกราฟเป็นสัดส่วนเพื่อการนำเสนอจากตัวเลขที่กรอก ไม่ใช่ IRR และไม่ใช่มูลค่าเวนคืนกรมธรรม์
       </div>
+
+      <DepositInterestCalculator />
     </div>
+  );
+}
+
+
+function DepositInterestCalculator() {
+  const [initialPrincipal, setInitialPrincipal] = useState("");
+  const [annualRate, setAnnualRate] = useState("");
+  const [taxRate, setTaxRate] = useState(15);
+  const [years, setYears] = useState("");
+  const [addEveryYear, setAddEveryYear] = useState(false);
+  const [addYears, setAddYears] = useState("");
+  const [annualAdd, setAnnualAdd] = useState("");
+
+  const parsePositiveNumber = (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? number : 0;
+  };
+
+  const depositCalc = useMemo(() => {
+    const principal = parsePositiveNumber(initialPrincipal);
+    const rate = parsePositiveNumber(annualRate);
+    const tax = Math.min(Math.max(Number(taxRate) || 0, 0), 100);
+    const totalYears = Math.floor(parsePositiveNumber(years));
+    const yearlyAdd = addEveryYear ? parsePositiveNumber(annualAdd) : 0;
+    const yearsToAdd = addEveryYear ? Math.floor(parsePositiveNumber(addYears)) : 0;
+    const afterTaxRate = rate * (1 - tax / 100);
+
+    let balance = principal;
+    let totalDeposits = principal;
+    let totalInterest = 0;
+    const rows = [];
+
+    for (let year = 1; year <= totalYears; year++) {
+      const startBalance = balance;
+      const addAmount = addEveryYear && year >= 2 && year <= yearsToAdd + 1 ? yearlyAdd : 0;
+      const base = startBalance + addAmount;
+      const interest = base * (afterTaxRate / 100);
+      const endBalance = base + interest;
+
+      totalDeposits += addAmount;
+      totalInterest += interest;
+      balance = endBalance;
+
+      rows.push({ year, startBalance, addAmount, interest, endBalance });
+    }
+
+    return {
+      afterTaxRate,
+      totalDeposits,
+      totalInterest,
+      endingBalance: balance,
+      rows
+    };
+  }, [initialPrincipal, annualRate, taxRate, years, addEveryYear, addYears, annualAdd]);
+
+  const fieldStyle = { display: "grid", gap: "6px" };
+  const inputStyle = {
+    width: "100%",
+    border: "1px solid rgba(200,169,110,0.32)",
+    borderRadius: "12px",
+    padding: "10px 12px",
+    background: "rgba(2,6,23,0.72)",
+    color: "#F8FAFC"
+  };
+
+  return (
+    <section style={{
+      marginTop: "16px",
+      padding: "16px",
+      borderRadius: "18px",
+      border: "1px solid rgba(200,169,110,0.24)",
+      background: "rgba(2,6,23,0.46)",
+      color: "#E5E7EB"
+    }}>
+      <h2 style={{margin: "0 0 6px", color: "#F8FAFC", fontSize: "1.2rem"}}>คำนวณดอกเบี้ยเงินฝากทั่วไป</h2>
+      <p style={{margin: "0 0 14px", color: "rgba(255,255,255,0.68)", fontSize: "13px", lineHeight: 1.6}}>
+        ใช้สำหรับอ้างอิงผลตอบแทนเงินฝากแบบง่าย โดยคำนวณจากดอกเบี้ยรายปีและภาษีหัก ณ ที่จ่าย
+      </p>
+
+      <div className="deposit-input-grid" style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px"}}>
+        <label style={fieldStyle}>
+          <span>เงินต้นเริ่มต้น</span>
+          <input type="number" min="0" placeholder="100000" value={initialPrincipal} onChange={(e) => setInitialPrincipal(e.target.value)} style={inputStyle} />
+        </label>
+        <label style={fieldStyle}>
+          <span>ดอกเบี้ยต่อปี (%)</span>
+          <input type="number" min="0" step="0.01" placeholder="0.8" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)} style={inputStyle} />
+        </label>
+        <label style={fieldStyle}>
+          <span>ภาษีดอกเบี้ย (%)</span>
+          <input type="number" min="0" max="100" step="0.01" placeholder="15" value={taxRate} onChange={(e) => setTaxRate(e.target.value)} style={inputStyle} />
+        </label>
+        <label style={fieldStyle}>
+          <span>ดอกเบี้ยหลังหักภาษี (%)</span>
+          <input type="text" readOnly value={`${depositCalc.afterTaxRate.toFixed(2)}%`} style={{...inputStyle, color: "#C8A96E", fontWeight: 900}} />
+        </label>
+        <label style={fieldStyle}>
+          <span>จำนวนปีที่ฝาก</span>
+          <input type="number" min="0" placeholder="5" value={years} onChange={(e) => setYears(e.target.value)} style={inputStyle} />
+        </label>
+        <label style={{...fieldStyle, alignContent: "end"}}>
+          <span style={{display: "flex", alignItems: "center", gap: "10px", minHeight: "42px", color: "#E5E7EB", fontWeight: 800}}>
+            <input type="checkbox" checked={addEveryYear} onChange={(e) => setAddEveryYear(e.target.checked)} style={{width: "18px", height: "18px", accentColor: "#C8A96E"}} />
+            ฝากเพิ่มทุกปี
+          </span>
+        </label>
+      </div>
+
+      {addEveryYear && (
+        <div className="deposit-input-grid" style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", marginTop: "10px"}}>
+          <label style={fieldStyle}>
+            <span>จำนวนปีที่ฝากเพิ่ม</span>
+            <input type="number" min="0" placeholder="3" value={addYears} onChange={(e) => setAddYears(e.target.value)} style={inputStyle} />
+          </label>
+          <label style={fieldStyle}>
+            <span>ฝากเพิ่มปีละ</span>
+            <input type="number" min="0" placeholder="100000" value={annualAdd} onChange={(e) => setAnnualAdd(e.target.value)} style={inputStyle} />
+          </label>
+        </div>
+      )}
+
+      <div className="deposit-summary-grid" style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", marginTop: "14px"}}>
+        {[
+          ["เงินฝากรวมทั้งหมด", money(depositCalc.totalDeposits), "#C8A96E"],
+          ["ดอกเบี้ยรวมหลังหักภาษี", money(depositCalc.totalInterest), "#4ADE80"],
+          ["ยอดเงินปลายทาง", money(depositCalc.endingBalance), "#4ADE80"],
+          ["อัตราดอกเบี้ยหลังหักภาษี", `${depositCalc.afterTaxRate.toFixed(2)}%`, "#C8A96E"],
+        ].map(([label, value, color]) => (
+          <div key={label} style={{
+            padding: "12px",
+            borderRadius: "14px",
+            border: "1px solid rgba(200,169,110,0.22)",
+            background: "rgba(15,23,42,0.68)"
+          }}>
+            <div style={{fontSize: "12px", color: "rgba(255,255,255,0.62)", marginBottom: "5px"}}>{label}</div>
+            <div style={{fontSize: "20px", fontWeight: 900, color}}>{value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{marginTop: "14px", overflowX: "auto"}}>
+        <table style={{width: "100%", minWidth: "640px", borderCollapse: "collapse", fontSize: "13px"}}>
+          <thead>
+            <tr>
+              {["ปีที่", "เงินต้นต้นปี", "ฝากเพิ่ม", "ดอกเบี้ยหลังหักภาษี", "ยอดปลายปี"].map((header) => (
+                <th key={header} style={{textAlign: "right", padding: "10px 8px", color: "#C8A96E", borderBottom: "1px solid rgba(200,169,110,0.28)"}}>{header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {depositCalc.rows.length === 0 ? (
+              <tr>
+                <td colSpan="5" style={{padding: "14px 8px", color: "rgba(255,255,255,0.58)", textAlign: "center"}}>
+                  กรอกข้อมูลเพื่อดูรายละเอียดรายปี
+                </td>
+              </tr>
+            ) : depositCalc.rows.map((row) => (
+              <tr key={row.year}>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>{row.year}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>{money(row.startBalance)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: row.addAmount > 0 ? "#C8A96E" : "rgba(255,255,255,0.55)"}}>{money(row.addAmount)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#4ADE80"}}>{money(row.interest)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#F8FAFC", fontWeight: 800}}>{money(row.endBalance)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{
+        marginTop: "12px",
+        padding: "11px 12px",
+        borderRadius: "14px",
+        border: "1px solid rgba(200,169,110,0.20)",
+        color: "rgba(255,255,255,0.66)",
+        fontSize: "12px",
+        lineHeight: 1.6
+      }}>
+        ตัวเลขนี้เป็นการคำนวณตัวอย่างแบบง่ายจากดอกเบี้ยรายปี ไม่ใช่ข้อเสนอเงินฝากจากธนาคารใดธนาคารหนึ่ง และอัตราดอกเบี้ยจริงอาจแตกต่างกันตามเงื่อนไขของแต่ละสถาบันการเงิน
+      </div>
+    </section>
   );
 }
 
