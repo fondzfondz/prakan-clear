@@ -1180,8 +1180,10 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
     ? `conic-gradient(${gradientParts.join(", ")})`
     : "conic-gradient(rgba(255,255,255,0.12) 0% 100%)";
 
-  const percentOf = (item) => total > 0 ? ((item.value / total) * 100).toFixed(2) : "0.00";
   const netColor = Number(netDifference || 0) >= 0 ? "#FBBF24" : "#FCA5A5";
+  const netReturnPercent = Number(totalPremium || 0) > 0
+    ? (Number(netDifference || 0) / Number(totalPremium || 0)) * 100
+    : null;
 
   return (
     <div style={{
@@ -1248,7 +1250,11 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
                   <div style={{fontWeight: 900, color: item.key === "net" ? netColor : item.color, fontSize: "18px", lineHeight: 1.15}}>
                     {money(shownValue)} บาท
                   </div>
-                  <div style={{fontSize: "12px", color: "rgba(255,255,255,0.62)", marginTop: "2px"}}>{percentOf(item)}%</div>
+                  {item.key === "net" && (
+                    <div style={{fontSize: "12px", color: "rgba(255,255,255,0.62)", marginTop: "2px"}}>
+                      {netReturnPercent === null ? "-" : `คิดเป็น ${netReturnPercent.toFixed(2)}% ของเบี้ยที่จ่าย`}
+                    </div>
+                  )}
                 </div>
               </div>
             );
