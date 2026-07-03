@@ -1254,6 +1254,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
             );
           })}
 
+          {false && (
           <div style={{
             marginTop: "4px",
             padding: "12px",
@@ -1272,6 +1273,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
               <b>{Number.isFinite(projectedIRR) ? projectedIRR.toFixed(2) : "-"}% ต่อปี</b>
             </div>
           </div>
+          )}
         </div>
       </div>
 
