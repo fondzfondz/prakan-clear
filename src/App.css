@@ -405,3 +405,59 @@ body > div #root .hero,
     font-size: 1.25rem !important;
   }
 }
+
+/* Hero height cap: keep the premium crop without pushing the calculator too far down */
+@media (min-width: 769px) {
+  .hero,
+  header.hero,
+  #root .hero,
+  body .hero,
+  body header.hero {
+    height: clamp(420px, 48vh, 560px) !important;
+    min-height: 0 !important;
+    max-height: 560px !important;
+    margin-top: 22px !important;
+    margin-bottom: 20px !important;
+    padding-top: clamp(48px, 6vh, 72px) !important;
+    padding-bottom: clamp(40px, 5vh, 64px) !important;
+    overflow: hidden !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+
+  .hero img,
+  .hero-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+  .hero-content {
+    position: relative !important;
+    z-index: 2 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero,
+  header.hero,
+  #root .hero,
+  body .hero,
+  body header.hero {
+    height: auto !important;
+    min-height: 520px !important;
+    max-height: none !important;
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+
+  .hero-content {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}

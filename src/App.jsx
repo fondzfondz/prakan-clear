@@ -709,10 +709,12 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           }
         }      `}</style>
 <section
+          className="hero"
           style={{
             position: "relative",
-            minHeight: "560px",
-            margin: "22px auto 0",
+            height: "clamp(420px, 48vh, 560px)",
+            maxHeight: "560px",
+            margin: "22px auto 20px",
             maxWidth: "1180px",
             borderRadius: "28px",
             overflow: "hidden",
@@ -723,10 +725,10 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             boxShadow: "0 24px 70px rgba(0,0,0,0.45)",
             display: "flex",
             alignItems: "center",
-            padding: "54px"
+            padding: "clamp(48px, 6vh, 72px) 54px clamp(40px, 5vh, 64px)"
           }}
         >
-          <div style={{ maxWidth: "660px", color: "#F8FAFC", transform: "translateY(-18px)" }}>
+          <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "translateY(-18px)" }}>
             
 <div style={{
               color: "#C8A96E",
