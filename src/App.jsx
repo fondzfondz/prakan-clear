@@ -714,20 +714,22 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             position: "relative",
             height: "clamp(420px, 48vh, 560px)",
             maxHeight: "560px",
-            margin: "22px auto 20px",
-            maxWidth: "1180px",
-            borderRadius: "28px",
+            margin: "22px 0 20px",
+            width: "100%",
+            maxWidth: "none",
+            borderRadius: "0",
             overflow: "hidden",
-            backgroundImage: `linear-gradient(90deg, rgba(2,6,23,0.98) 0%, rgba(2,6,23,0.90) 34%, rgba(2,6,23,0.28) 58%, rgba(2,6,23,0.04) 100%), url(${HERO_FAMILY_IMAGE})`,
+            backgroundImage: `url(${HERO_FAMILY_IMAGE})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             border: "1px solid rgba(200,169,110,0.24)",
             boxShadow: "0 24px 70px rgba(0,0,0,0.45)",
             display: "flex",
             alignItems: "center",
-            padding: "clamp(48px, 6vh, 72px) 54px clamp(40px, 5vh, 64px)"
+            padding: "0"
           }}
         >
+          <img className="hero-image" src={HERO_FAMILY_IMAGE} alt="" aria-hidden="true" />
           <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "translateY(-18px)" }}>
             
 <div style={{
