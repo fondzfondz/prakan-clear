@@ -120,6 +120,13 @@ function App() {
   const [compareError2, setCompareError2] = useState("");
   const [isExtractingCompare, setIsExtractingCompare] = useState(false);
   const [showRawPdfText, setShowRawPdfText] = useState(false);
+  const [showReviewMode, setShowReviewMode] = useState(false);
+  const [depositReviewSummary, setDepositReviewSummary] = useState({
+    totalDeposits: 0,
+    totalInterest: 0,
+    endingBalance: 0,
+    afterTaxRate: 0
+  });
 
   // Set the worker path for pdfjs using Vite local bundled worker
   // This avoids CDN errors such as "Failed to fetch dynamically imported module"
@@ -801,6 +808,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               netDifference={netDifference}
               guaranteedIRR={calc.guaranteedIRR}
               projectedIRR={calc.projectedIRR}
+              setDepositReviewSummary={setDepositReviewSummary}
             />
           )}
 
@@ -1129,6 +1137,23 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                 มีเงินคืนระหว่างทางตามรูปแบบที่เลือกไว้
               </div>
             )}
+            <button
+              type="button"
+              onClick={() => setShowReviewMode(true)}
+              style={{
+                marginTop: "14px",
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: "14px",
+                border: "1px solid rgba(200,169,110,0.55)",
+                background: "linear-gradient(135deg, #DDBB68 0%, #C8A96E 52%, #B8872D 100%)",
+                color: "#07111f",
+                fontWeight: 900,
+                cursor: "pointer"
+              }}
+            >
+              ดูโหมดรีวิว
+            </button>
           </div>
         </section>
 <section id="contact" className="panel" style={{
@@ -1152,12 +1177,415 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
       <footer style={{fontSize: "14px", lineHeight: 1.7, maxWidth: "980px", margin: "26px auto"}}>
         {FULL_DISCLAIMER}
       </footer>
+
+      {showReviewMode && (
+        <ReviewMode
+          insurancePrincipal={calc.totalPremium}
+          insuranceGain={netDifference}
+          depositPrincipal={depositReviewSummary.totalDeposits}
+          depositGain={depositReviewSummary.totalInterest}
+          onClose={() => setShowReviewMode(false)}
+        />
+      )}
     </div>
   );
 }
 
 
-function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDividendTotal, netDifference, guaranteedIRR, projectedIRR }) {
+function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depositGain, onClose }) {
+  const [activeTab, setActiveTab] = useState("insurance");
+  const insurance = {
+    principal: Number(insurancePrincipal || 0),
+    gain: Number(insuranceGain || 0)
+  };
+  const deposit = {
+    principal: Number(depositPrincipal || 0),
+    gain: Number(depositGain || 0)
+  };
+  const comparisonGap = Math.abs(insurance.gain - deposit.gain);
+
+  const tabs = [
+    { key: "insurance", label: "ประกัน" },
+    { key: "deposit", label: "เงินฝาก" },
+    { key: "summary", label: "สรุป" },
+  ];
+
+  return (
+    <div className="review-mode-overlay" role="dialog" aria-modal="true">
+      <style>{`
+        .review-mode-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          overflow-y: auto;
+          overflow-x: hidden;
+          background:
+            radial-gradient(circle at top left, rgba(200,169,110,0.16), transparent 28%),
+            radial-gradient(circle at bottom right, rgba(74,222,128,0.08), transparent 32%),
+            #020617;
+          color: #E5E7EB;
+          padding: 22px;
+          box-sizing: border-box;
+        }
+        .review-mode-shell {
+          position: relative;
+          width: min(1180px, 100%);
+          min-height: calc(100vh - 44px);
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .review-watermark {
+          position: fixed;
+          top: 48%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-14deg);
+          text-align: center;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          color: rgba(200,169,110,0.075);
+          pointer-events: none;
+          z-index: 0;
+          white-space: nowrap;
+          line-height: 1.25;
+        }
+        .review-watermark strong {
+          display: block;
+          font-size: clamp(46px, 10vw, 132px);
+        }
+        .review-watermark span {
+          display: block;
+          font-size: clamp(15px, 2.2vw, 30px);
+        }
+        .review-topbar,
+        .review-tabs,
+        .review-panel,
+        .review-footnote {
+          position: relative;
+          z-index: 1;
+        }
+        .review-topbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+          padding: 16px 18px;
+          border: 1px solid rgba(200,169,110,0.24);
+          border-radius: 18px;
+          background: rgba(15,23,42,0.78);
+          box-shadow: 0 18px 54px rgba(0,0,0,0.34);
+        }
+        .review-tabs {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+        .review-tabs button,
+        .review-close {
+          border: 1px solid rgba(200,169,110,0.32);
+          border-radius: 14px;
+          padding: 12px 14px;
+          font-weight: 900;
+          cursor: pointer;
+          box-sizing: border-box;
+        }
+        .review-tabs button {
+          background: rgba(15,23,42,0.88);
+          color: #E5E7EB;
+        }
+        .review-tabs button.active {
+          background: #C8A96E;
+          color: #07111f;
+        }
+        .review-close {
+          background: rgba(2,6,23,0.72);
+          color: #F8FAFC;
+          white-space: nowrap;
+        }
+        .review-panel {
+          flex: 1;
+          padding: clamp(18px, 3vw, 30px);
+          border: 1px solid rgba(200,169,110,0.24);
+          border-radius: 22px;
+          background: rgba(15,23,42,0.86);
+          box-shadow: 0 22px 70px rgba(0,0,0,0.36);
+          box-sizing: border-box;
+        }
+        .review-grid {
+          display: grid;
+          grid-template-columns: minmax(280px, 0.95fr) minmax(280px, 1.05fr);
+          gap: 18px;
+          align-items: stretch;
+        }
+        .review-summary-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(280px, 1fr));
+          gap: 18px;
+        }
+        .review-info-box {
+          padding: 16px;
+          border-radius: 18px;
+          border: 1px solid rgba(200,169,110,0.22);
+          background: rgba(2,6,23,0.46);
+        }
+        .review-info-box h3 {
+          margin: 0 0 10px;
+          color: #C8A96E;
+        }
+        .review-info-box ul {
+          margin: 0;
+          padding-left: 0;
+          list-style: none;
+          display: grid;
+          gap: 9px;
+          line-height: 1.55;
+        }
+        .review-footnote {
+          color: rgba(255,255,255,0.62);
+          font-size: 12px;
+          line-height: 1.6;
+          padding: 0 4px 4px;
+        }
+        @media (max-width: 820px) {
+          .review-mode-overlay {
+            padding: 12px;
+          }
+          .review-mode-shell {
+            min-height: calc(100vh - 24px);
+          }
+          .review-topbar {
+            align-items: stretch;
+            flex-direction: column;
+          }
+          .review-close {
+            width: 100%;
+          }
+          .review-grid,
+          .review-summary-grid {
+            grid-template-columns: 1fr;
+          }
+          .review-tabs {
+            gap: 8px;
+          }
+          .review-tabs button {
+            padding: 11px 8px;
+          }
+        }
+      `}</style>
+
+      <div className="review-watermark">
+        <strong>PRAKAN CLEAR</strong>
+        <span>ตัวอย่างการคำนวณเท่านั้น</span>
+        <span>ไม่ใช่เอกสารเสนอขาย</span>
+      </div>
+
+      <div className="review-mode-shell">
+        <div className="review-topbar">
+          <div>
+            <div style={{fontSize: "clamp(22px, 3vw, 34px)", fontWeight: 900, color: "#F8FAFC"}}>Prakan Clear</div>
+            <div style={{marginTop: "4px", color: "#C8A96E", fontWeight: 800}}>โหมดรีวิวตัวอย่างการคำนวณ</div>
+            <div style={{marginTop: "6px", color: "rgba(255,255,255,0.64)", fontSize: "13px", lineHeight: 1.5}}>
+              ใช้สำหรับแสดงภาพรวมจากข้อมูลที่กรอก ไม่ใช่เอกสารเสนอขายอย่างเป็นทางการ
+            </div>
+          </div>
+          <button type="button" className="review-close" onClick={onClose}>กลับไปแก้ไขข้อมูล</button>
+        </div>
+
+        <div className="review-tabs">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              className={activeTab === tab.key ? "active" : ""}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <main className="review-panel">
+          {activeTab === "insurance" && (
+            <ReviewSinglePage
+              title="รีวิวประกัน"
+              donutTitle="ประกัน"
+              principalLabel="เบี้ยรวม"
+              principalValue={insurance.principal}
+              gainLabel="ส่วนต่างสุทธิ"
+              gainValue={insurance.gain}
+              pros={["มีความมั่นคงสูง", "ความเสี่ยงต่ำ", "ผลตอบแทนไม่เสียภาษี", "มีความคุ้มครอง", "ส่งต่อมรดกแบบปลอดภาษี"]}
+              cons={["สภาพคล่องต่ำ"]}
+            />
+          )}
+
+          {activeTab === "deposit" && (
+            <ReviewSinglePage
+              title="รีวิวเงินฝาก"
+              donutTitle="เงินฝาก"
+              principalLabel="เงินต้นรวม"
+              principalValue={deposit.principal}
+              gainLabel="ดอกเบี้ยสุทธิรวม"
+              gainValue={deposit.gain}
+              pros={["สภาพคล่องสูง", "มีความยืดหยุ่นสูง"]}
+              cons={["อัตราดอกเบี้ยเปลี่ยนตามประกาศได้ตลอด", "เงินดอกเบี้ยต้องเสียภาษี"]}
+            />
+          )}
+
+          {activeTab === "summary" && (
+            <div>
+              <h2 style={{margin: "0 0 18px", color: "#F8FAFC", fontSize: "clamp(26px, 4vw, 42px)"}}>สรุปเปรียบเทียบ</h2>
+              <div className="review-summary-grid">
+                <ReviewDonut
+                  title="ประกัน"
+                  principalLabel="เงินต้นรวม"
+                  principalValue={insurance.principal}
+                  gainLabel="ส่วนต่าง"
+                  gainValue={insurance.gain}
+                />
+                <ReviewDonut
+                  title="เงินฝาก"
+                  principalLabel="เงินต้นรวม"
+                  principalValue={deposit.principal}
+                  gainLabel="ส่วนต่าง"
+                  gainValue={deposit.gain}
+                />
+              </div>
+              <div style={{
+                marginTop: "18px",
+                padding: "18px",
+                borderRadius: "18px",
+                border: "1px solid rgba(200,169,110,0.28)",
+                background: "rgba(200,169,110,0.10)",
+                color: "#F8FAFC",
+                fontSize: "clamp(18px, 2.4vw, 26px)",
+                fontWeight: 900,
+                textAlign: "center"
+              }}>
+                ส่วนต่างระหว่างประกันและเงินฝาก {money(comparisonGap)} บาท
+              </div>
+            </div>
+          )}
+        </main>
+
+        <div className="review-footnote">
+          * ข้อความบางส่วนเป็นการสรุปโดยย่อ ควรพิจารณาตามหลักเกณฑ์ เงื่อนไขกรมธรรม์ และเงื่อนไขทางภาษีที่เกี่ยวข้อง
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function ReviewSinglePage({ title, donutTitle, principalLabel, principalValue, gainLabel, gainValue, pros, cons }) {
+  return (
+    <div>
+      <h2 style={{margin: "0 0 18px", color: "#F8FAFC", fontSize: "clamp(26px, 4vw, 42px)"}}>{title}</h2>
+      <div className="review-grid">
+        <ReviewDonut
+          title={donutTitle}
+          principalLabel={principalLabel}
+          principalValue={principalValue}
+          gainLabel={gainLabel}
+          gainValue={gainValue}
+        />
+        <div style={{display: "grid", gap: "14px"}}>
+          <ReviewProsCons title="จุดเด่น" items={pros} marker="✓" color="#4ADE80" />
+          <ReviewProsCons title="ข้อจำกัด" items={cons} marker="!" color="#FBBF24" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function ReviewDonut({ title, principalLabel, principalValue, gainLabel, gainValue }) {
+  const principal = Math.max(Number(principalValue || 0), 0);
+  const gainRaw = Number(gainValue || 0);
+  const gainForChart = Math.abs(gainRaw);
+  const total = principal + gainForChart;
+  const principalPercent = total > 0 ? (principal / total) * 100 : 0;
+  const donutBackground = total > 0
+    ? `conic-gradient(#60A5FA 0% ${principalPercent}%, #4ADE80 ${principalPercent}% 100%)`
+    : "conic-gradient(rgba(148,163,184,0.38) 0% 100%)";
+  const gainColor = gainRaw >= 0 ? "#4ADE80" : "#FCA5A5";
+
+  return (
+    <section style={{
+      padding: "18px",
+      borderRadius: "20px",
+      border: "1px solid rgba(200,169,110,0.24)",
+      background: "rgba(2,6,23,0.48)",
+      minWidth: 0
+    }}>
+      <h3 style={{margin: "0 0 16px", color: "#C8A96E", fontSize: "1.15rem"}}>{title}</h3>
+      <div style={{display: "grid", placeItems: "center"}}>
+        <div style={{
+          width: "min(300px, 72vw)",
+          aspectRatio: "1 / 1",
+          borderRadius: "50%",
+          background: donutBackground,
+          boxShadow: "0 18px 48px rgba(0,0,0,0.32), inset 0 0 0 1px rgba(255,255,255,0.08)",
+          position: "relative"
+        }}>
+          <div style={{
+            position: "absolute",
+            inset: "27%",
+            borderRadius: "50%",
+            background: "#020617",
+            border: "1px solid rgba(255,255,255,0.10)",
+            display: "grid",
+            placeItems: "center",
+            textAlign: "center",
+            padding: "12px"
+          }}>
+            <div style={{fontSize: "12px", color: "rgba(255,255,255,0.62)"}}>{gainLabel}</div>
+            <div style={{fontSize: "clamp(17px, 3vw, 25px)", color: gainColor, fontWeight: 900, lineHeight: 1.12}}>
+              {money(gainRaw)}
+            </div>
+            <div style={{fontSize: "11px", color: "rgba(255,255,255,0.52)"}}>บาท</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{display: "grid", gap: "10px", marginTop: "18px"}}>
+        <ReviewMetricRow color="#60A5FA" label={principalLabel} value={principal} />
+        <ReviewMetricRow color={gainColor} label={gainLabel} value={gainRaw} />
+      </div>
+    </section>
+  );
+}
+
+
+function ReviewMetricRow({ color, label, value }) {
+  return (
+    <div style={{display: "grid", gridTemplateColumns: "16px 1fr auto", gap: "10px", alignItems: "center", minWidth: 0}}>
+      <span style={{width: "13px", height: "13px", borderRadius: "50%", background: color, boxShadow: `0 0 0 4px ${color}22`}} />
+      <span style={{color: "rgba(255,255,255,0.72)", minWidth: 0}}>{label}</span>
+      <strong style={{color: "#F8FAFC", textAlign: "right", whiteSpace: "nowrap"}}>{money(value)} บาท</strong>
+    </div>
+  );
+}
+
+
+function ReviewProsCons({ title, items, marker, color }) {
+  return (
+    <section className="review-info-box">
+      <h3>{title}</h3>
+      <ul>
+        {items.map((item) => (
+          <li key={item} style={{display: "flex", gap: "10px", color: "#E5E7EB"}}>
+            <span style={{color, fontWeight: 900}}>{marker}</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+
+function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDividendTotal, netDifference, guaranteedIRR, projectedIRR, setDepositReviewSummary = () => {} }) {
   const displayItems = [
     { key: "paid", label: "เบี้ยที่จ่าย", detail: "เงินออก", value: Number(totalPremium || 0), color: "#EF4444" },
     { key: "cashback", label: "เงินคืนระหว่างทาง", detail: "เงินเข้า", value: Number(totalCashback || 0), color: "#4ADE80" },
@@ -1295,7 +1723,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
         หมายเหตุ: เปอร์เซ็นต์ในกราฟเป็นสัดส่วนเพื่อการนำเสนอจากตัวเลขที่กรอก ไม่ใช่ IRR และไม่ใช่มูลค่าเวนคืนกรมธรรม์
       </div>
 
-      <DepositInterestCalculator />
+      <DepositInterestCalculator onSummaryChange={setDepositReviewSummary} />
     </div>
   );
 }
@@ -1482,7 +1910,7 @@ function LegacyDepositInterestCalculator() {
 }
 
 
-function DepositInterestCalculator() {
+function DepositInterestCalculator({ onSummaryChange }) {
   const [initialPrincipal, setInitialPrincipal] = useState("");
   const [annualRate, setAnnualRate] = useState("");
   const [taxRate, setTaxRate] = useState(15);
@@ -1532,6 +1960,15 @@ function DepositInterestCalculator() {
       rows
     };
   }, [initialPrincipal, annualRate, taxRate, years, addEveryYear, addYears, annualAdd]);
+
+  useEffect(() => {
+    onSummaryChange?.({
+      totalDeposits: depositCalc.totalDeposits,
+      totalInterest: depositCalc.totalInterest,
+      endingBalance: depositCalc.endingBalance,
+      afterTaxRate: depositCalc.afterTaxRate
+    });
+  }, [depositCalc, onSummaryChange]);
 
   const fieldStyle = { display: "grid", gap: "6px" };
   const helperStyle = { color: "rgba(255,255,255,0.58)", fontSize: "12px", lineHeight: 1.45 };
