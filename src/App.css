@@ -407,6 +407,23 @@ body > div #root .hero,
 }
 
 /* Hero height cap: keep the premium crop without pushing the calculator too far down */
+.site-header {
+  padding-top: 8px !important;
+  padding-bottom: 6px !important;
+}
+
+.logo-card {
+  min-height: 72px !important;
+  padding: 14px 24px !important;
+}
+
+@media (min-width: 1200px) {
+  .site-header {
+    padding-top: 6px !important;
+    padding-bottom: 4px !important;
+  }
+}
+
 @media (min-width: 769px) {
   .hero,
   header.hero,
@@ -462,12 +479,22 @@ body > div #root .hero,
     max-width: 620px !important;
     padding-left: clamp(24px, 5vw, 80px) !important;
     padding-right: clamp(24px, 4vw, 54px) !important;
-    padding-top: 48px !important;
-    padding-bottom: 48px !important;
+    padding-top: clamp(56px, 7vh, 88px) !important;
+    padding-bottom: clamp(44px, 6vh, 72px) !important;
+    transform: none !important;
   }
 }
 
 @media (max-width: 768px) {
+  .site-header {
+    padding-top: 14px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .logo-card {
+    min-height: 0 !important;
+  }
+
   .hero,
   header.hero,
   #root .hero,
@@ -516,6 +543,7 @@ body > div #root .hero,
   .hero-content {
     position: relative !important;
     z-index: 2 !important;
-    padding: 48px 24px !important;
+    padding: 56px 24px 48px !important;
+    transform: none !important;
   }
 }

@@ -550,14 +550,14 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
   return (
     <div className="page dark-theme" id="home">
-      <div style={{
+      <div className="site-header" style={{
         width: "100%",
         maxWidth: "1180px",
-        margin: "0 auto 18px",
+        margin: "0 auto 8px",
         display: "flex",
         justifyContent: "flex-end",
         gap: "12px",
-        padding: "8px 4px"
+        padding: "6px 4px"
       }}>
         <a href="#home" style={{
           color: "#07111f",
@@ -578,10 +578,10 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         }}>CONTACT</a>
       </div>
 
-      <div className="top-brand-strip" style={{
+      <div className="top-brand-strip logo-card" style={{
         width: "min(1180px, calc(100vw - 40px))",
-        margin: "10px auto 18px",
-        padding: "18px 22px",
+        margin: "4px auto 12px",
+        padding: "14px 22px",
         borderRadius: "22px",
         border: "1px solid rgba(200,169,110,0.22)",
         background: "rgba(15, 23, 42, 0.72)",
@@ -643,7 +643,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           white-space: nowrap;
         }
         .dark-theme .hero {
-          background: linear-gradient(135deg, #020617 0%, #0f172a 60%, #111827 100%) !important;
+          background-color: #020617 !important;
           border-bottom: 1px solid rgba(200,169,110,0.25);
         }
         .dark-theme .brand, .dark-theme .hero-card, .dark-theme .layout, .dark-theme footer { position: relative; z-index: 1; }
@@ -730,7 +730,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           }}
         >
           <img className="hero-image" src={HERO_FAMILY_IMAGE} alt="" aria-hidden="true" />
-          <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "translateY(-18px)" }}>
+          <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "none" }}>
             
 <div style={{
               color: "#C8A96E",
