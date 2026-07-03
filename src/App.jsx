@@ -1431,8 +1431,8 @@ function DepositInterestCalculator() {
         ))}
       </div>
 
-      <div style={{marginTop: "14px", overflowX: "auto"}}>
-        <table style={{width: "100%", minWidth: "640px", borderCollapse: "collapse", fontSize: "13px"}}>
+      <div className="deposit-table-wrap" style={{marginTop: "14px", overflowX: "auto"}}>
+        <table className="deposit-table" style={{width: "100%", minWidth: "640px", borderCollapse: "collapse", fontSize: "13px"}}>
           <thead>
             <tr>
               {["ปีที่", "เงินต้นต้นปี", "ฝากเพิ่ม", "ดอกเบี้ยหลังหักภาษี", "ยอดปลายปี"].map((header) => (

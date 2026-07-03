@@ -552,3 +552,120 @@ body > div #root .hero,
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Tablet/iPad: keep the calculator usable instead of squeezing two panels side by side */
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.prakan-calculator-panel,
+.prakan-presentation-panel {
+  min-width: 0 !important;
+}
+
+.prakan-calculator-panel *,
+.prakan-presentation-panel *,
+.deposit-table-wrap {
+  box-sizing: border-box;
+}
+
+.prakan-calculator-panel input,
+.prakan-calculator-panel select,
+.prakan-calculator-panel textarea,
+.prakan-calculator-panel button,
+.deposit-input-grid input,
+.deposit-summary-grid input {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.prakan-calculator-panel input,
+.prakan-calculator-panel select,
+.prakan-calculator-panel textarea {
+  width: 100% !important;
+}
+
+.form-grid,
+.input-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.form-grid > *,
+.input-grid > *,
+.prakan-calculator-panel label,
+.prakan-calculator-panel div {
+  min-width: 0 !important;
+}
+
+.deposit-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.deposit-table {
+  min-width: 640px;
+}
+
+@media (max-width: 1200px) {
+  main.prakan-responsive-shell,
+  .prakan-responsive-shell,
+  body .prakan-responsive-shell,
+  .layout,
+  body .layout,
+  .workspace-grid,
+  .content-grid,
+  .app-grid,
+  .analysis-grid,
+  .upload-calculator-grid,
+  .main-grid,
+  .grid.two-column,
+  .two-column,
+  .columns {
+    width: min(100%, calc(100vw - 32px)) !important;
+    max-width: none !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .prakan-calculator-panel {
+    order: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .prakan-presentation-panel {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #contact {
+    order: 3 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .form-grid,
+  .input-grid,
+  .prakan-calculator-panel .form-grid,
+  .prakan-calculator-panel .input-grid,
+  .deposit-input-grid,
+  .deposit-summary-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .prakan-calculator-panel [style*="grid-template-columns"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .prakan-calculator-panel button {
+    white-space: normal !important;
+  }
+}
