@@ -715,27 +715,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             grid-template-columns: 1fr !important;
           }
         }      `}</style>
-<section
-          className="hero"
-          style={{
-            position: "relative",
-            height: "clamp(420px, 48vh, 560px)",
-            maxHeight: "560px",
-            margin: "22px 0 20px",
-            width: "100%",
-            maxWidth: "none",
-            borderRadius: "0",
-            overflow: "hidden",
-            backgroundImage: `url(${HERO_FAMILY_IMAGE})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            border: "1px solid rgba(200,169,110,0.24)",
-            boxShadow: "0 24px 70px rgba(0,0,0,0.45)",
-            display: "flex",
-            alignItems: "center",
-            padding: "0"
-          }}
-        >
+      <div className="hero-shell">
+        <section className="hero hero-container">
           <img className="hero-image" src={HERO_FAMILY_IMAGE} alt="" aria-hidden="true" />
           <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "none" }}>
             
@@ -785,7 +766,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               ใช้สำหรับอ่านข้อมูลจากเอกสารและช่วยจัดระเบียบตัวเลขให้เห็นภาพชัดขึ้น โดยยังควรตรวจสอบกับเอกสารกรมธรรม์หรือบริษัทประกันอีกครั้ง
             </div>
           </div>
-      </section>
+        </section>
+      </div>
 
 
       <main className="layout prakan-responsive-shell">
