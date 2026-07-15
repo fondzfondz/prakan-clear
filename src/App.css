@@ -211,7 +211,7 @@ footer {
   background-repeat: no-repeat;
   background-position: center, center right;
   background-size: cover, cover;
-  opacity: 0.08;
+  opacity: 0.06;
   -webkit-mask-image: radial-gradient(ellipse 72% 62% at 72% 42%, #000 0%, rgba(0, 0, 0, 0.78) 48%, transparent 100%);
   mask-image: radial-gradient(ellipse 72% 62% at 72% 42%, #000 0%, rgba(0, 0, 0, 0.78) 48%, transparent 100%);
 }
@@ -232,7 +232,7 @@ footer {
   .page-background::before {
     top: -36px;
     bottom: -36px;
-    opacity: 0.04;
+    opacity: 0.035;
     background-size: cover, auto 65%;
     background-position: center, 70% center;
     -webkit-mask-image: radial-gradient(ellipse 90% 45% at 70% 40%, #000 0%, transparent 76%);

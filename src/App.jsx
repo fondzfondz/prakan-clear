@@ -625,13 +625,18 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
 
 
       <style>{`
-        body { background: #020617 !important; }
+        body {
+          background:
+            radial-gradient(circle at 78% 34%, rgba(20,126,137,0.13), transparent 34%),
+            radial-gradient(circle at 12% 8%, rgba(201,170,94,0.08), transparent 28%),
+            linear-gradient(180deg, #0A1020 0%, #07111D 48%, #030814 100%) !important;
+        }
         .dark-theme {
           min-height: 100vh;
           background:
-            radial-gradient(circle at top left, rgba(200,169,110,0.11), transparent 33%),
-            radial-gradient(circle at top right, rgba(59,130,246,0.10), transparent 28%),
-            #020617 !important;
+            radial-gradient(circle at 78% 34%, rgba(20,126,137,0.13), transparent 34%),
+            radial-gradient(circle at 12% 8%, rgba(201,170,94,0.08), transparent 28%),
+            linear-gradient(180deg, #0A1020 0%, #07111D 48%, #030814 100%) !important;
           color: #e5e7eb;
           position: relative;
           overflow-x: hidden;
