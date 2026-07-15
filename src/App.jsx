@@ -770,7 +770,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
       </div>
 
 
-      <main className="layout prakan-responsive-shell">
+      <main className="layout prakan-responsive-shell page-background">
         <section className="panel prakan-presentation-panel">
           <div className="tabs">
             <button className={mode === "analyze" ? "active" : ""} onClick={() => setMode("analyze")}>

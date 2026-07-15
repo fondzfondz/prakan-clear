@@ -189,6 +189,57 @@ footer {
   }
 }
 
+/* Decorative depth for the middle content only; Hero and footer stay untouched. */
+.page-background {
+  position: relative;
+  isolation: isolate;
+}
+
+.page-background::before {
+  content: "";
+  position: absolute;
+  top: -72px;
+  bottom: -72px;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, rgba(3, 8, 18, 0.72), rgba(3, 8, 18, 0.88)),
+    url("/images/digital-wave-background.png");
+  background-repeat: no-repeat;
+  background-position: center, center right;
+  background-size: cover, cover;
+  opacity: 0.08;
+  -webkit-mask-image: radial-gradient(ellipse 72% 62% at 72% 42%, #000 0%, rgba(0, 0, 0, 0.78) 48%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 62% at 72% 42%, #000 0%, rgba(0, 0, 0, 0.78) 48%, transparent 100%);
+}
+
+.page-background > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 1800px) {
+  .page-background::before {
+    background-size: cover, min(1800px, 82vw) auto;
+    background-position: center, 74% center;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-background::before {
+    top: -36px;
+    bottom: -36px;
+    opacity: 0.04;
+    background-size: cover, auto 65%;
+    background-position: center, 70% center;
+    -webkit-mask-image: radial-gradient(ellipse 90% 45% at 70% 40%, #000 0%, transparent 76%);
+    mask-image: radial-gradient(ellipse 90% 45% at 70% 40%, #000 0%, transparent 76%);
+  }
+}
+
 /* Home hero: centered, ratio-safe layout for wide and ultra-wide screens. */
 .hero-shell {
   width: 100%;
