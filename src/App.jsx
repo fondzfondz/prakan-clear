@@ -725,6 +725,16 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           <img className="hero-image" src={HERO_FAMILY_IMAGE} alt="" aria-hidden="true" />
           <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "none" }}>
 
+            <div style={{
+              color: "#C8A96E",
+              fontSize: "18px",
+              fontWeight: 800,
+              letterSpacing: "0.4px",
+              marginBottom: "18px"
+            }}>
+              Insurance Facts. Clearly Presented.
+            </div>
+
             <h1 style={{
               fontSize: "clamp(34px, 4vw, 56px)",
               lineHeight: 1.16,
