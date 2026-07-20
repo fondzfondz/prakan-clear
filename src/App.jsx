@@ -724,16 +724,6 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         <section className="hero hero-container">
           <img className="hero-image" src={HERO_FAMILY_IMAGE} alt="" aria-hidden="true" />
           <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "none" }}>
-            
-<div style={{
-              color: "#C8A96E",
-              fontSize: "18px",
-              fontWeight: 800,
-              letterSpacing: "0.4px",
-              marginBottom: "18px"
-            }}>
-              Insurance Facts. Clearly Presented.
-            </div>
 
             <h1 style={{
               fontSize: "clamp(34px, 4vw, 56px)",
@@ -745,31 +735,6 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               เพราะการตัดสินใจทางการเงินที่ดี<br />
               เริ่มต้นจากการเข้าใจข้อมูลอย่างถูกต้อง
             </h1>
-
-            <div style={{
-              display: "grid",
-              gap: "10px",
-              marginTop: "26px",
-              marginBottom: "28px",
-              color: "#E2E8F0",
-              fontSize: "17px",
-              lineHeight: 1.65
-            }}>
-              <div>✓ วิเคราะห์ใบเสนอขายประกันชีวิต</div>
-              <div>✓ แยกผลประโยชน์รับประกันและไม่รับประกัน</div>
-              <div>✓ คำนวณ IRR</div>
-              <div>✓ สรุปเงื่อนไขสำคัญในภาษาที่เข้าใจง่าย</div>
-            </div>
-
-            <div style={{
-              color: "#CBD5E1",
-              fontSize: "15px",
-              lineHeight: 1.7,
-              maxWidth: "560px",
-              marginTop: "4px"
-            }}>
-              ใช้สำหรับอ่านข้อมูลจากเอกสารและช่วยจัดระเบียบตัวเลขให้เห็นภาพชัดขึ้น โดยยังควรตรวจสอบกับเอกสารกรมธรรม์หรือบริษัทประกันอีกครั้ง
-            </div>
           </div>
         </section>
       </div>
