@@ -511,17 +511,17 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
   <meta charset="utf-8" />
   <title>Prakan Clear Report</title>
   <style>
-    body { font-family: Arial, "Noto Sans Thai", sans-serif; margin: 0; background: #F3EFE7; color: #282326; line-height: 1.75; }
+    body { font-family: Arial, "Noto Sans Thai", sans-serif; margin: 0; background: #fff; color: #0f172a; line-height: 1.75; }
     .page { position: relative; max-width: 900px; margin: 0 auto; padding: 42px; min-height: 100vh; overflow: hidden; }
-    .watermark { position: fixed; top: 38%; left: 50%; transform: translate(-50%, -50%) rotate(-18deg); font-size: 76px; font-weight: 900; color: rgba(48, 35, 48, 0.055); white-space: nowrap; z-index: 0; pointer-events: none; }
+    .watermark { position: fixed; top: 38%; left: 50%; transform: translate(-50%, -50%) rotate(-18deg); font-size: 76px; font-weight: 900; color: rgba(15, 23, 42, 0.055); white-space: nowrap; z-index: 0; pointer-events: none; }
     .content { position: relative; z-index: 1; }
-    .brand { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #B8754D; padding-bottom: 18px; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #c8a96e; padding-bottom: 18px; margin-bottom: 24px; }
     .brand img { width: 150px; height: 72px; object-fit: contain; }
-    h1 { margin: 0; color: #282326; font-size: 30px; }
+    h1 { margin: 0; color: #0f172a; font-size: 30px; }
     .subtitle { color: #475569; margin-top: 6px; }
-    pre { white-space: pre-wrap; font-family: inherit; background: #F7F1E8; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; font-size: 14px; }
+    pre { white-space: pre-wrap; font-family: inherit; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; font-size: 14px; }
     .disclaimer { margin-top: 24px; padding: 16px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; color: #7c2d12; font-size: 13px; }
-    .footer { margin-top: 30px; color: #6F6469; font-size: 12px; text-align: center; }
+    .footer { margin-top: 30px; color: #64748b; font-size: 12px; text-align: center; }
   </style>
 </head>
 <body>
@@ -567,17 +567,17 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         padding: "6px 4px"
       }}>
         <a href="#home" style={{
-          color: "#F7F1E8",
-          background: "#B8754D",
+          color: "#07111f",
+          background: "#C8A96E",
           borderRadius: "999px",
           padding: "10px 18px",
           fontWeight: 900,
           textDecoration: "none"
         }}>HOME</a>
         <a href="#contact" style={{
-          color: "#F7F1E8",
-          background: "rgba(36,26,36,0.72)",
-          border: "1px solid rgba(212,161,125,0.28)",
+          color: "#FFFFFF",
+          background: "rgba(8,18,36,0.72)",
+          border: "1px solid rgba(200,169,110,0.55)",
           borderRadius: "999px",
           padding: "10px 18px",
           fontWeight: 900,
@@ -590,12 +590,12 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         margin: "4px auto 12px",
         padding: "14px 22px",
         borderRadius: "22px",
-        border: "1px solid rgba(212,161,125,0.28)",
-        background: "rgba(48, 35, 48, 0.94)",
+        border: "1px solid rgba(200,169,110,0.22)",
+        background: "rgba(15, 23, 42, 0.72)",
         display: "flex",
         alignItems: "center",
         gap: "18px",
-        boxShadow: "0 14px 34px rgba(36,26,36,0.20)"
+        boxShadow: "0 14px 34px rgba(0,0,0,0.20)"
       }}>
         <img src={PRAKAN_CLEAR_LOGO} alt="PrakanClear" style={{
           width: "108px",
@@ -605,7 +605,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
         }} />
         <div>
           <div style={{
-            color: "#F7F1E8",
+            color: "#F8FAFC",
             fontWeight: 900,
             fontSize: "1.55rem",
             lineHeight: 1.15
@@ -613,7 +613,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             ประกันเคลียร์
           </div>
           <div style={{
-            color: "rgba(247,241,232,0.72)",
+            color: "rgba(255,255,255,0.72)",
             fontWeight: 600,
             fontSize: "0.95rem",
             marginTop: "4px"
@@ -627,17 +627,17 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
       <style>{`
         body {
           background:
-            radial-gradient(circle at 78% 34%, rgba(184,117,77,0.13), transparent 34%),
-            radial-gradient(circle at 12% 8%, rgba(212,161,125,0.08), transparent 28%),
-            linear-gradient(180deg, #F3EFE7 0%, #E8E0D4 48%, #F3EFE7 100%) !important;
+            radial-gradient(circle at 78% 34%, rgba(20,126,137,0.13), transparent 34%),
+            radial-gradient(circle at 12% 8%, rgba(201,170,94,0.08), transparent 28%),
+            linear-gradient(180deg, #0A1020 0%, #07111D 48%, #030814 100%) !important;
         }
         .dark-theme {
           min-height: 100vh;
           background:
-            radial-gradient(circle at 78% 34%, rgba(184,117,77,0.13), transparent 34%),
-            radial-gradient(circle at 12% 8%, rgba(212,161,125,0.08), transparent 28%),
-            linear-gradient(180deg, #F3EFE7 0%, #E8E0D4 48%, #F3EFE7 100%) !important;
-          color: #282326;
+            radial-gradient(circle at 78% 34%, rgba(20,126,137,0.13), transparent 34%),
+            radial-gradient(circle at 12% 8%, rgba(201,170,94,0.08), transparent 28%),
+            linear-gradient(180deg, #0A1020 0%, #07111D 48%, #030814 100%) !important;
+          color: #e5e7eb;
           position: relative;
           overflow-x: hidden;
         }
@@ -649,63 +649,63 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           transform: rotate(-24deg);
           font-size: 112px;
           font-weight: 900;
-          color: rgba(184,117,77,0.035);
+          color: rgba(200,169,110,0.035);
           pointer-events: none;
           z-index: 0;
           white-space: nowrap;
         }
         .dark-theme .hero {
-          background-color: #241A24 !important;
-          border-bottom: 1px solid rgba(212,161,125,0.28);
+          background-color: #020617 !important;
+          border-bottom: 1px solid rgba(200,169,110,0.25);
         }
         .dark-theme .brand, .dark-theme .hero-card, .dark-theme .layout, .dark-theme footer { position: relative; z-index: 1; }
         .dark-theme .panel {
-          background: #FBF8F2 !important;
-          border: 1px solid #D8C9BA;
-          box-shadow: 0 18px 50px rgba(36,26,36,0.14);
-          color: #282326;
+          background: rgba(15, 23, 42, 0.94) !important;
+          border: 1px solid rgba(200,169,110,0.18);
+          box-shadow: 0 18px 50px rgba(0,0,0,0.38);
+          color: #e5e7eb;
         }
-        .dark-theme h1, .dark-theme h2, .dark-theme h3 { color: #282326 !important; }
-        .dark-theme .muted, .dark-theme p, .dark-theme label span { color: #6F6469 !important; }
+        .dark-theme h1, .dark-theme h2, .dark-theme h3 { color: #f8fafc !important; }
+        .dark-theme .muted, .dark-theme p, .dark-theme label span { color: #cbd5e1 !important; }
         .dark-theme input, .dark-theme textarea {
-          background: #FBF8F2 !important;
-          border: 1px solid #D8C9BA !important;
-          color: #282326 !important;
+          background: #020617 !important;
+          border: 1px solid rgba(200,169,110,0.35) !important;
+          color: #f8fafc !important;
         }
         .dark-theme .upload-box, .dark-theme .cashflow, .dark-theme pre, .dark-theme .rules, .dark-theme .lead {
-          background: #E8E0D4 !important;
-          border-color: #D8C9BA !important;
-          color: #282326 !important;
+          background: rgba(2, 6, 23, 0.58) !important;
+          border-color: rgba(200,169,110,0.25) !important;
+          color: #e5e7eb !important;
         }
-        .dark-theme .rule { border-bottom-color: #D8C9BA !important; color: #282326 !important; }
+        .dark-theme .rule { border-bottom-color: rgba(200,169,110,0.14) !important; color: #e5e7eb !important; }
         .dark-theme .tabs button {
-          background: #E8E0D4 !important;
-          color: #6F6469 !important;
-          border-color: #D8C9BA !important;
+          background: rgba(2, 6, 23, 0.45) !important;
+          color: #e5e7eb !important;
+          border-color: rgba(200,169,110,0.32) !important;
         }
-        .dark-theme .tabs button.active { background: #B8754D !important; color: #F7F1E8 !important; }
+        .dark-theme .tabs button.active { background: #c8a96e !important; color: #07111f !important; }
 
         .dark-theme .upload-file-btn,
         .dark-theme label .upload-file-btn,
         .dark-theme button.upload-file-btn {
-          background: linear-gradient(135deg, #D4A17D 0%, #B8754D 45%, #9A5F3E 100%) !important;
-          color: #F7F1E8 !important;
-          border: 1px solid rgba(184,117,77,0.45) !important;
-          box-shadow: 0 8px 18px rgba(36,26,36,0.18), inset 0 1px 0 rgba(247,241,232,0.35) !important;
+          background: linear-gradient(135deg, #DDBB68 0%, #C8A96E 45%, #B8872D 100%) !important;
+          color: #07111f !important;
+          border: 1px solid rgba(126, 83, 20, 0.45) !important;
+          box-shadow: 0 8px 18px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.35) !important;
           opacity: 1 !important;
           text-shadow: none !important;
         }
         .dark-theme .upload-file-btn:disabled {
-          background: linear-gradient(135deg, #B8754D 0%, #9A5F3E 100%) !important;
-          color: #F7F1E8 !important;
+          background: linear-gradient(135deg, #D0A74B 0%, #B8872D 100%) !important;
+          color: #07111f !important;
           opacity: 0.88 !important;
         }
         .dark-theme .metric {
-          background: linear-gradient(135deg, #241A24, #302330) !important;
-          border: 1px solid rgba(212,161,125,0.28);
+          background: linear-gradient(135deg, #0f172a, #111827) !important;
+          border: 1px solid rgba(200,169,110,0.28);
         }
-        .dark-theme .empty { color: #6F6469 !important; }
-        .dark-theme footer { color: #F7F1E8 !important; background: #241A24 !important; }
+        .dark-theme .empty { color: #cbd5e1 !important; }
+        .dark-theme footer { color: #94a3b8 !important; }
 
         @media (max-width: 768px) {
           .prakan-responsive-shell {
@@ -723,10 +723,10 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
       <div className="hero-shell">
         <section className="hero hero-container">
           <img className="hero-image" src={HERO_FAMILY_IMAGE} alt="" aria-hidden="true" />
-          <div className="hero-content" style={{ maxWidth: "660px", color: "#F7F1E8", transform: "none" }}>
+          <div className="hero-content" style={{ maxWidth: "660px", color: "#F8FAFC", transform: "none" }}>
             
 <div style={{
-              color: "#B8754D",
+              color: "#C8A96E",
               fontSize: "18px",
               fontWeight: 800,
               letterSpacing: "0.4px",
@@ -739,7 +739,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               fontSize: "clamp(34px, 4vw, 56px)",
               lineHeight: 1.16,
               margin: "0 0 20px",
-              color: "#F7F1E8",
+              color: "#F8FAFC",
               fontWeight: 900
             }}>
               เพราะการตัดสินใจทางการเงินที่ดี<br />
@@ -762,7 +762,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             </div>
 
             <div style={{
-              color: "#D8C9BA",
+              color: "#CBD5E1",
               fontSize: "15px",
               lineHeight: 1.7,
               maxWidth: "560px",
@@ -804,12 +804,12 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               <div style={{
                 padding: "18px",
                 borderRadius: "18px",
-                border: "1px solid rgba(212,161,125,0.28)",
-                background: "rgba(36,26,36,0.62)",
+                border: "1px solid rgba(200,169,110,0.28)",
+                background: "rgba(2,6,23,0.62)",
                 textAlign: "center"
               }}>
-                <FileText size={34} style={{color: "#B8754D", marginBottom: "10px"}} />
-                <h2 style={{margin: "0 0 8px", color: "#F7F1E8"}}>ยังไม่เปิดให้บริการ</h2>
+                <FileText size={34} style={{color: "#C8A96E", marginBottom: "10px"}} />
+                <h2 style={{margin: "0 0 8px", color: "#F8FAFC"}}>ยังไม่เปิดให้บริการ</h2>
                 <p style={{margin: 0, color: "rgba(255,255,255,0.72)", lineHeight: 1.7}}>
                   กำลังพัฒนา
                 </p>
@@ -843,8 +843,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               marginTop: "4px",
               padding: "16px",
               borderRadius: "18px",
-              border: "1px solid rgba(212,161,125,0.36)",
-              background: "rgba(48,35,48,0.58)"
+              border: "1px solid rgba(200,169,110,0.36)",
+              background: "rgba(8,18,36,0.58)"
             }}>
               
           <div style={{
@@ -852,8 +852,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             marginTop: "8px",
             padding: "12px 14px",
             borderRadius: "14px",
-            border: "1px solid rgba(212,161,125,0.28)",
-            background: "rgba(212,161,125,0.10)",
+            border: "1px solid rgba(200,169,110,0.28)",
+            background: "rgba(200,169,110,0.10)",
             color: "rgba(255,255,255,0.78)",
             fontSize: "13px",
             lineHeight: 1.6
@@ -861,7 +861,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             เริ่มต้นทุกช่องเป็นค่าว่าง เพื่อป้องกันตัวเลขตัวอย่างค้างอยู่ในผลคำนวณ กรุณากรอกเฉพาะข้อมูลที่มีในใบเสนอขาย
           </div>
 
-<div style={{color: "#B8754D", fontWeight: 900, marginBottom: "10px"}}>
+<div style={{color: "#C8A96E", fontWeight: 900, marginBottom: "10px"}}>
                 เงินคืนตามกรมธรรม์
               </div>
 
@@ -879,9 +879,9 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                     style={{
                       padding: "11px 12px",
                       borderRadius: "14px",
-                      border: cashbackMode === item.key ? "1px solid #B8754D" : "1px solid rgba(255,255,255,0.16)",
-                      background: cashbackMode === item.key ? "#B8754D" : "rgba(36,26,36,0.45)",
-                      color: cashbackMode === item.key ? "#241A24" : "#F7F1E8",
+                      border: cashbackMode === item.key ? "1px solid #C8A96E" : "1px solid rgba(255,255,255,0.16)",
+                      background: cashbackMode === item.key ? "#C8A96E" : "rgba(2,6,23,0.45)",
+                      color: cashbackMode === item.key ? "#07111f" : "#E5E7EB",
                       fontWeight: 900,
                       cursor: "pointer"
                     }}
@@ -957,7 +957,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                     </div>
                   ))}
 
-                  <button type="button" onClick={addRangeCashbackRow} style={{marginTop: "6px", padding: "10px 14px", borderRadius: "999px", border: "1px solid rgba(212,161,125,0.55)", background: "#B8754D", color: "#241A24", fontWeight: 900}}>
+                  <button type="button" onClick={addRangeCashbackRow} style={{marginTop: "6px", padding: "10px 14px", borderRadius: "999px", border: "1px solid rgba(200,169,110,0.55)", background: "#C8A96E", color: "#07111f", fontWeight: 900}}>
                     + เพิ่มช่วงเงินคืน
                   </button>
                 </div>
@@ -995,7 +995,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                     </div>
                   ))}
 
-                  <button type="button" onClick={addSpecialCashbackRow} style={{marginTop: "6px", padding: "10px 14px", borderRadius: "999px", border: "1px solid rgba(212,161,125,0.55)", background: "#B8754D", color: "#241A24", fontWeight: 900}}>
+                  <button type="button" onClick={addSpecialCashbackRow} style={{marginTop: "6px", padding: "10px 14px", borderRadius: "999px", border: "1px solid rgba(200,169,110,0.55)", background: "#C8A96E", color: "#07111f", fontWeight: 900}}>
                     + เพิ่มคืนปีที่
                   </button>
                 </div>
@@ -1007,10 +1007,10 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               marginTop: "4px",
               padding: "16px",
               borderRadius: "18px",
-              border: "1px solid rgba(212,161,125,0.36)",
-              background: "rgba(48,35,48,0.58)"
+              border: "1px solid rgba(200,169,110,0.36)",
+              background: "rgba(8,18,36,0.58)"
             }}>
-              <div style={{color: "#B8754D", fontWeight: 900, marginBottom: "10px"}}>
+              <div style={{color: "#C8A96E", fontWeight: 900, marginBottom: "10px"}}>
                 เงินปันผลคาดการณ์ / โบนัสพิเศษ
               </div>
 
@@ -1018,9 +1018,9 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                 <button type="button" onClick={() => setDividendMode("single")} style={{
                   padding: "11px 12px",
                   borderRadius: "14px",
-                  border: dividendMode === "single" ? "1px solid #B8754D" : "1px solid rgba(255,255,255,0.16)",
-                  background: dividendMode === "single" ? "#B8754D" : "rgba(36,26,36,0.45)",
-                  color: dividendMode === "single" ? "#241A24" : "#F7F1E8",
+                  border: dividendMode === "single" ? "1px solid #C8A96E" : "1px solid rgba(255,255,255,0.16)",
+                  background: dividendMode === "single" ? "#C8A96E" : "rgba(2,6,23,0.45)",
+                  color: dividendMode === "single" ? "#07111f" : "#E5E7EB",
                   fontWeight: 900,
                   cursor: "pointer"
                 }}>
@@ -1030,9 +1030,9 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                 <button type="button" onClick={() => setDividendMode("annual")} style={{
                   padding: "11px 12px",
                   borderRadius: "14px",
-                  border: dividendMode === "annual" ? "1px solid #B8754D" : "1px solid rgba(255,255,255,0.16)",
-                  background: dividendMode === "annual" ? "#B8754D" : "rgba(36,26,36,0.45)",
-                  color: dividendMode === "annual" ? "#241A24" : "#F7F1E8",
+                  border: dividendMode === "annual" ? "1px solid #C8A96E" : "1px solid rgba(255,255,255,0.16)",
+                  background: dividendMode === "annual" ? "#C8A96E" : "rgba(2,6,23,0.45)",
+                  color: dividendMode === "annual" ? "#07111f" : "#E5E7EB",
                   fontWeight: 900,
                   cursor: "pointer"
                 }}>
@@ -1067,7 +1067,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                     </div>
                   ))}
 
-                  <button type="button" onClick={addAnnualDividendRow} style={{marginTop: "6px", padding: "10px 14px", borderRadius: "999px", border: "1px solid rgba(212,161,125,0.55)", background: "#B8754D", color: "#241A24", fontWeight: 900}}>
+                  <button type="button" onClick={addAnnualDividendRow} style={{marginTop: "6px", padding: "10px 14px", borderRadius: "999px", border: "1px solid rgba(200,169,110,0.55)", background: "#C8A96E", color: "#07111f", fontWeight: 900}}>
                     + เพิ่มรายการปันผล
                   </button>
 
@@ -1092,8 +1092,8 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
               marginTop: "12px",
               padding: "12px 14px",
               borderRadius: "14px",
-              border: "1px solid rgba(212,161,125,0.30)",
-              background: "rgba(212,161,125,0.10)",
+              border: "1px solid rgba(200,169,110,0.30)",
+              background: "rgba(200,169,110,0.10)",
               color: "rgba(255,255,255,0.78)",
               fontSize: "13px",
               lineHeight: 1.65
@@ -1108,19 +1108,19 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
             <div>รวมเงินคืนระหว่างทาง: <b>{money(calc.totalCashback)}</b> บาท</div>
             <div>เงินครบสัญญา: <b>{money(maturity)}</b> บาท</div>
             <div>เงินปันผล/โบนัสคาดการณ์: <b>{money(projectedDividendTotal)}</b> บาท</div>
-            <div style={{marginTop: "10px", paddingTop: "10px", borderTop: "1px solid rgba(212,161,125,0.22)", color: netDifference >= 0 ? "#86EFAC" : "#FCA5A5", fontWeight: 900}}>
+            <div style={{marginTop: "10px", paddingTop: "10px", borderTop: "1px solid rgba(200,169,110,0.22)", color: netDifference >= 0 ? "#86EFAC" : "#FCA5A5", fontWeight: 900}}>
               กำไร/ส่วนต่างสุทธิ: <b>{money(netDifference)}</b> บาท
             </div>
             <div style={{marginTop: "4px", color: "rgba(255,255,255,0.58)", fontSize: "12px", lineHeight: 1.55}}>
               คำนวณจาก (เงินคืนระหว่างทาง + เงินครบสัญญา + เงินปันผลคาดการณ์) - รวมเบี้ยที่จ่าย
             </div>
-            <div style={{marginTop: "10px", paddingTop: "10px", borderTop: "1px solid rgba(212,161,125,0.22)", display: "grid", gap: "6px"}}>
+            <div style={{marginTop: "10px", paddingTop: "10px", borderTop: "1px solid rgba(200,169,110,0.22)", display: "grid", gap: "6px"}}>
               <div>IRR รับประกัน: <b>{Number.isFinite(calc.guaranteedIRR) ? calc.guaranteedIRR.toFixed(2) : "-"}%</b> ต่อปี</div>
               <div>IRR รวมคาดการณ์: <b>{Number.isFinite(calc.projectedIRR) ? calc.projectedIRR.toFixed(2) : "-"}%</b> ต่อปี</div>
             </div>
 
             {hasCashback && (
-              <div style={{marginTop: "10px", color: "#B8754D", fontWeight: 800, lineHeight: 1.65}}>
+              <div style={{marginTop: "10px", color: "#C8A96E", fontWeight: 800, lineHeight: 1.65}}>
                 มีเงินคืนระหว่างทางตามรูปแบบที่เลือกไว้
               </div>
             )}
@@ -1132,9 +1132,9 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
                 width: "100%",
                 padding: "12px 16px",
                 borderRadius: "14px",
-                border: "1px solid rgba(212,161,125,0.55)",
-                background: "linear-gradient(135deg, #D4A17D 0%, #B8754D 52%, #9A5F3E 100%)",
-                color: "#241A24",
+                border: "1px solid rgba(200,169,110,0.55)",
+                background: "linear-gradient(135deg, #DDBB68 0%, #C8A96E 52%, #B8872D 100%)",
+                color: "#07111f",
                 fontWeight: 900,
                 cursor: "pointer"
               }}
@@ -1147,7 +1147,7 @@ ${notes ? `📝 หมายเหตุเพิ่มเติม\n${notes}` :
           gridColumn: "1 / -1",
           textAlign: "center"
         }}>
-          <h2 style={{color: "#B8754D"}}>ติดต่อ PrakanClear</h2>
+          <h2 style={{color: "#C8A96E"}}>ติดต่อ PrakanClear</h2>
           <a href="mailto:fondzdnc@gmail.com" style={{
             color: "#FFFFFF",
             fontWeight: 900,
@@ -1207,10 +1207,10 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
           overflow-y: auto;
           overflow-x: hidden;
           background:
-            radial-gradient(circle at top left, rgba(212,161,125,0.16), transparent 28%),
+            radial-gradient(circle at top left, rgba(200,169,110,0.16), transparent 28%),
             radial-gradient(circle at bottom right, rgba(74,222,128,0.08), transparent 32%),
-            #241A24;
-          color: #F7F1E8;
+            #020617;
+          color: #E5E7EB;
           padding: 22px;
           box-sizing: border-box;
         }
@@ -1231,7 +1231,7 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
           text-align: center;
           font-weight: 900;
           letter-spacing: 0.08em;
-          color: rgba(212,161,125,0.075);
+          color: rgba(200,169,110,0.075);
           pointer-events: none;
           z-index: 0;
           white-space: nowrap;
@@ -1258,9 +1258,9 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
           align-items: center;
           gap: 16px;
           padding: 16px 18px;
-          border: 1px solid rgba(212,161,125,0.24);
+          border: 1px solid rgba(200,169,110,0.24);
           border-radius: 18px;
-          background: rgba(48,35,48,0.78);
+          background: rgba(15,23,42,0.78);
           box-shadow: 0 18px 54px rgba(0,0,0,0.34);
         }
         .review-tabs {
@@ -1270,7 +1270,7 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
         }
         .review-tabs button,
         .review-close {
-          border: 1px solid rgba(212,161,125,0.32);
+          border: 1px solid rgba(200,169,110,0.32);
           border-radius: 14px;
           padding: 12px 14px;
           font-weight: 900;
@@ -1278,24 +1278,24 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
           box-sizing: border-box;
         }
         .review-tabs button {
-          background: rgba(48,35,48,0.88);
-          color: #F7F1E8;
+          background: rgba(15,23,42,0.88);
+          color: #E5E7EB;
         }
         .review-tabs button.active {
-          background: #B8754D;
-          color: #241A24;
+          background: #C8A96E;
+          color: #07111f;
         }
         .review-close {
-          background: rgba(36,26,36,0.72);
-          color: #F7F1E8;
+          background: rgba(2,6,23,0.72);
+          color: #F8FAFC;
           white-space: nowrap;
         }
         .review-panel {
           flex: 1;
           padding: clamp(18px, 3vw, 30px);
-          border: 1px solid rgba(212,161,125,0.24);
+          border: 1px solid rgba(200,169,110,0.24);
           border-radius: 22px;
-          background: rgba(48,35,48,0.86);
+          background: rgba(15,23,42,0.86);
           box-shadow: 0 22px 70px rgba(0,0,0,0.36);
           box-sizing: border-box;
         }
@@ -1313,12 +1313,12 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
         .review-info-box {
           padding: 16px;
           border-radius: 18px;
-          border: 1px solid rgba(212,161,125,0.22);
-          background: rgba(36,26,36,0.46);
+          border: 1px solid rgba(200,169,110,0.22);
+          background: rgba(2,6,23,0.46);
         }
         .review-info-box h3 {
           margin: 0 0 10px;
-          color: #B8754D;
+          color: #C8A96E;
         }
         .review-info-box ul {
           margin: 0;
@@ -1370,8 +1370,8 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
       <div className="review-mode-shell">
         <div className="review-topbar">
           <div>
-            <div style={{fontSize: "clamp(22px, 3vw, 34px)", fontWeight: 900, color: "#F7F1E8"}}>Prakan Clear</div>
-            <div style={{marginTop: "4px", color: "#B8754D", fontWeight: 800}}>โหมดรีวิวตัวอย่างการคำนวณ</div>
+            <div style={{fontSize: "clamp(22px, 3vw, 34px)", fontWeight: 900, color: "#F8FAFC"}}>Prakan Clear</div>
+            <div style={{marginTop: "4px", color: "#C8A96E", fontWeight: 800}}>โหมดรีวิวตัวอย่างการคำนวณ</div>
             <div style={{marginTop: "6px", color: "rgba(255,255,255,0.64)", fontSize: "13px", lineHeight: 1.5}}>
               ใช้สำหรับแสดงภาพรวมจากข้อมูลที่กรอก ไม่ใช่เอกสารเสนอขายอย่างเป็นทางการ
             </div>
@@ -1421,7 +1421,7 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
 
           {activeTab === "summary" && (
             <div>
-              <h2 style={{margin: "0 0 18px", color: "#F7F1E8", fontSize: "clamp(26px, 4vw, 42px)"}}>สรุปเปรียบเทียบ</h2>
+              <h2 style={{margin: "0 0 18px", color: "#F8FAFC", fontSize: "clamp(26px, 4vw, 42px)"}}>สรุปเปรียบเทียบ</h2>
               <div className="review-summary-grid">
                 <ReviewDonut
                   title="ประกัน"
@@ -1442,9 +1442,9 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
                 marginTop: "18px",
                 padding: "18px",
                 borderRadius: "18px",
-                border: "1px solid rgba(212,161,125,0.28)",
-                background: "rgba(212,161,125,0.10)",
-                color: "#F7F1E8",
+                border: "1px solid rgba(200,169,110,0.28)",
+                background: "rgba(200,169,110,0.10)",
+                color: "#F8FAFC",
                 fontSize: "clamp(18px, 2.4vw, 26px)",
                 fontWeight: 900,
                 textAlign: "center"
@@ -1467,7 +1467,7 @@ function ReviewMode({ insurancePrincipal, insuranceGain, depositPrincipal, depos
 function ReviewSinglePage({ title, donutTitle, principalLabel, principalValue, gainLabel, gainValue, pros, cons }) {
   return (
     <div>
-      <h2 style={{margin: "0 0 18px", color: "#F7F1E8", fontSize: "clamp(26px, 4vw, 42px)"}}>{title}</h2>
+      <h2 style={{margin: "0 0 18px", color: "#F8FAFC", fontSize: "clamp(26px, 4vw, 42px)"}}>{title}</h2>
       <div className="review-grid">
         <ReviewDonut
           title={donutTitle}
@@ -1501,11 +1501,11 @@ function ReviewDonut({ title, principalLabel, principalValue, gainLabel, gainVal
     <section style={{
       padding: "18px",
       borderRadius: "20px",
-      border: "1px solid rgba(212,161,125,0.24)",
-      background: "rgba(36,26,36,0.48)",
+      border: "1px solid rgba(200,169,110,0.24)",
+      background: "rgba(2,6,23,0.48)",
       minWidth: 0
     }}>
-      <h3 style={{margin: "0 0 16px", color: "#B8754D", fontSize: "1.15rem"}}>{title}</h3>
+      <h3 style={{margin: "0 0 16px", color: "#C8A96E", fontSize: "1.15rem"}}>{title}</h3>
       <div style={{display: "grid", placeItems: "center"}}>
         <div style={{
           width: "min(300px, 72vw)",
@@ -1519,7 +1519,7 @@ function ReviewDonut({ title, principalLabel, principalValue, gainLabel, gainVal
             position: "absolute",
             inset: "27%",
             borderRadius: "50%",
-            background: "#241A24",
+            background: "#020617",
             border: "1px solid rgba(255,255,255,0.10)",
             display: "grid",
             placeItems: "center",
@@ -1549,7 +1549,7 @@ function ReviewMetricRow({ color, label, value }) {
     <div style={{display: "grid", gridTemplateColumns: "16px 1fr auto", gap: "10px", alignItems: "center", minWidth: 0}}>
       <span style={{width: "13px", height: "13px", borderRadius: "50%", background: color, boxShadow: `0 0 0 4px ${color}22`}} />
       <span style={{color: "rgba(255,255,255,0.72)", minWidth: 0}}>{label}</span>
-      <strong style={{color: "#F7F1E8", textAlign: "right", whiteSpace: "nowrap"}}>{money(value)} บาท</strong>
+      <strong style={{color: "#F8FAFC", textAlign: "right", whiteSpace: "nowrap"}}>{money(value)} บาท</strong>
     </div>
   );
 }
@@ -1561,7 +1561,7 @@ function ReviewProsCons({ title, items, marker, color }) {
       <h3>{title}</h3>
       <ul>
         {items.map((item) => (
-          <li key={item} style={{display: "flex", gap: "10px", color: "#F7F1E8"}}>
+          <li key={item} style={{display: "flex", gap: "10px", color: "#E5E7EB"}}>
             <span style={{color, fontWeight: 900}}>{marker}</span>
             <span>{item}</span>
           </li>
@@ -1605,11 +1605,11 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
       marginTop: "14px",
       padding: "18px",
       borderRadius: "20px",
-      background: "rgba(36,26,36,0.58)",
-      border: "1px solid rgba(212,161,125,0.24)",
-      color: "#F7F1E8"
+      background: "rgba(2,6,23,0.58)",
+      border: "1px solid rgba(200,169,110,0.24)",
+      color: "#E5E7EB"
     }}>
-      <h2 style={{margin: "0 0 4px", color: "#F7F1E8"}}>สรุปผลประโยชน์</h2>
+      <h2 style={{margin: "0 0 4px", color: "#F8FAFC"}}>สรุปผลประโยชน์</h2>
       <p style={{margin: "0 0 16px", color: "rgba(255,255,255,0.68)", fontSize: "13px", lineHeight: 1.65}}>
         ภาพรวมจากข้อมูลที่กรอก แสดงสัดส่วนเบี้ยที่จ่าย เงินคืน เงินครบสัญญา และส่วนต่างสุทธิ
       </p>
@@ -1628,7 +1628,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
               position: "absolute",
               inset: "26%",
               borderRadius: "50%",
-              background: "#241A24",
+              background: "#020617",
               border: "1px solid rgba(255,255,255,0.10)",
               display: "grid",
               placeItems: "center",
@@ -1658,7 +1658,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
               }}>
                 <span style={{width: "14px", height: "14px", borderRadius: "50%", background: item.color, display: "inline-block", boxShadow: `0 0 0 4px ${item.color}22`}} />
                 <div>
-                  <div style={{fontWeight: 800, color: "#F7F1E8", lineHeight: 1.25}}>{item.label}</div>
+                  <div style={{fontWeight: 800, color: "#F8FAFC", lineHeight: 1.25}}>{item.label}</div>
                   <div style={{fontSize: "12px", color: "rgba(255,255,255,0.55)", marginTop: "2px"}}>{item.detail}</div>
                 </div>
                 <div style={{textAlign: "right"}}>
@@ -1680,16 +1680,16 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
             marginTop: "4px",
             padding: "12px",
             borderRadius: "14px",
-            border: "1px solid rgba(212,161,125,0.26)",
-            background: "rgba(212,161,125,0.09)",
+            border: "1px solid rgba(200,169,110,0.26)",
+            background: "rgba(200,169,110,0.09)",
             display: "grid",
             gap: "7px"
           }}>
-            <div style={{display: "flex", justifyContent: "space-between", gap: "12px", color: "#F7F1E8"}}>
+            <div style={{display: "flex", justifyContent: "space-between", gap: "12px", color: "#E5E7EB"}}>
               <span>IRR รับประกัน</span>
               <b>{Number.isFinite(guaranteedIRR) ? guaranteedIRR.toFixed(2) : "-"}% ต่อปี</b>
             </div>
-            <div style={{display: "flex", justifyContent: "space-between", gap: "12px", color: "#F7F1E8"}}>
+            <div style={{display: "flex", justifyContent: "space-between", gap: "12px", color: "#E5E7EB"}}>
               <span>IRR รวมคาดการณ์</span>
               <b>{Number.isFinite(projectedIRR) ? projectedIRR.toFixed(2) : "-"}% ต่อปี</b>
             </div>
@@ -1702,7 +1702,7 @@ function BenefitDonutChart({ totalPremium, totalCashback, maturity, projectedDiv
         marginTop: "14px",
         padding: "11px 12px",
         borderRadius: "14px",
-        border: "1px solid rgba(212,161,125,0.22)",
+        border: "1px solid rgba(200,169,110,0.22)",
         color: "rgba(255,255,255,0.68)",
         fontSize: "12px",
         lineHeight: 1.6
@@ -1770,11 +1770,11 @@ function LegacyDepositInterestCalculator() {
   const fieldStyle = { display: "grid", gap: "6px" };
   const inputStyle = {
     width: "100%",
-    border: "1px solid rgba(212,161,125,0.32)",
+    border: "1px solid rgba(200,169,110,0.32)",
     borderRadius: "12px",
     padding: "10px 12px",
-    background: "rgba(36,26,36,0.72)",
-    color: "#F7F1E8"
+    background: "rgba(2,6,23,0.72)",
+    color: "#F8FAFC"
   };
 
   return (
@@ -1782,11 +1782,11 @@ function LegacyDepositInterestCalculator() {
       marginTop: "16px",
       padding: "16px",
       borderRadius: "18px",
-      border: "1px solid rgba(212,161,125,0.24)",
-      background: "rgba(36,26,36,0.46)",
-      color: "#F7F1E8"
+      border: "1px solid rgba(200,169,110,0.24)",
+      background: "rgba(2,6,23,0.46)",
+      color: "#E5E7EB"
     }}>
-      <h2 style={{margin: "0 0 6px", color: "#F7F1E8", fontSize: "1.2rem"}}>คำนวณดอกเบี้ยเงินฝากทั่วไป</h2>
+      <h2 style={{margin: "0 0 6px", color: "#F8FAFC", fontSize: "1.2rem"}}>คำนวณดอกเบี้ยเงินฝากทั่วไป</h2>
       <p style={{margin: "0 0 14px", color: "rgba(255,255,255,0.68)", fontSize: "13px", lineHeight: 1.6}}>
         ใช้สำหรับอ้างอิงผลตอบแทนเงินฝากแบบง่าย โดยคำนวณจากดอกเบี้ยรายปีและภาษีหัก ณ ที่จ่าย
       </p>
@@ -1806,15 +1806,15 @@ function LegacyDepositInterestCalculator() {
         </label>
         <label style={fieldStyle}>
           <span>ดอกเบี้ยหลังหักภาษี (%)</span>
-          <input type="text" readOnly value={`${depositCalc.afterTaxRate.toFixed(2)}%`} style={{...inputStyle, color: "#B8754D", fontWeight: 900}} />
+          <input type="text" readOnly value={`${depositCalc.afterTaxRate.toFixed(2)}%`} style={{...inputStyle, color: "#C8A96E", fontWeight: 900}} />
         </label>
         <label style={fieldStyle}>
           <span>จำนวนปีที่ฝาก</span>
           <input type="number" min="0" placeholder="5" value={years} onChange={(e) => setYears(e.target.value)} style={inputStyle} />
         </label>
         <label style={{...fieldStyle, alignContent: "end"}}>
-          <span style={{display: "flex", alignItems: "center", gap: "10px", minHeight: "42px", color: "#F7F1E8", fontWeight: 800}}>
-            <input type="checkbox" checked={addEveryYear} onChange={(e) => setAddEveryYear(e.target.checked)} style={{width: "18px", height: "18px", accentColor: "#B8754D"}} />
+          <span style={{display: "flex", alignItems: "center", gap: "10px", minHeight: "42px", color: "#E5E7EB", fontWeight: 800}}>
+            <input type="checkbox" checked={addEveryYear} onChange={(e) => setAddEveryYear(e.target.checked)} style={{width: "18px", height: "18px", accentColor: "#C8A96E"}} />
             ฝากเพิ่มทุกปี
           </span>
         </label>
@@ -1835,16 +1835,16 @@ function LegacyDepositInterestCalculator() {
 
       <div className="deposit-summary-grid" style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", marginTop: "14px"}}>
         {[
-          ["เงินฝากรวมทั้งหมด", money(depositCalc.totalDeposits), "#B8754D"],
+          ["เงินฝากรวมทั้งหมด", money(depositCalc.totalDeposits), "#C8A96E"],
           ["ดอกเบี้ยรวมหลังหักภาษี", money(depositCalc.totalInterest), "#4ADE80"],
           ["ยอดเงินปลายทาง", money(depositCalc.endingBalance), "#4ADE80"],
-          ["อัตราดอกเบี้ยหลังหักภาษี", `${depositCalc.afterTaxRate.toFixed(2)}%`, "#B8754D"],
+          ["อัตราดอกเบี้ยหลังหักภาษี", `${depositCalc.afterTaxRate.toFixed(2)}%`, "#C8A96E"],
         ].map(([label, value, color]) => (
           <div key={label} style={{
             padding: "12px",
             borderRadius: "14px",
-            border: "1px solid rgba(212,161,125,0.22)",
-            background: "rgba(48,35,48,0.68)"
+            border: "1px solid rgba(200,169,110,0.22)",
+            background: "rgba(15,23,42,0.68)"
           }}>
             <div style={{fontSize: "12px", color: "rgba(255,255,255,0.62)", marginBottom: "5px"}}>{label}</div>
             <div style={{fontSize: "20px", fontWeight: 900, color}}>{value}</div>
@@ -1857,7 +1857,7 @@ function LegacyDepositInterestCalculator() {
           <thead>
             <tr>
               {["ปีที่", "เงินต้นต้นปี", "ฝากเพิ่ม", "ดอกเบี้ยหลังหักภาษี", "ยอดปลายปี"].map((header) => (
-                <th key={header} style={{textAlign: "right", padding: "10px 8px", color: "#B8754D", borderBottom: "1px solid rgba(212,161,125,0.28)"}}>{header}</th>
+                <th key={header} style={{textAlign: "right", padding: "10px 8px", color: "#C8A96E", borderBottom: "1px solid rgba(200,169,110,0.28)"}}>{header}</th>
               ))}
             </tr>
           </thead>
@@ -1872,9 +1872,9 @@ function LegacyDepositInterestCalculator() {
               <tr key={row.year}>
                 <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>{row.year}</td>
                 <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>{money(row.startBalance)}</td>
-                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: row.addAmount > 0 ? "#B8754D" : "rgba(255,255,255,0.55)"}}>{money(row.addAmount)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: row.addAmount > 0 ? "#C8A96E" : "rgba(255,255,255,0.55)"}}>{money(row.addAmount)}</td>
                 <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#4ADE80"}}>{money(row.interest)}</td>
-                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#F7F1E8", fontWeight: 800}}>{money(row.endBalance)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#F8FAFC", fontWeight: 800}}>{money(row.endBalance)}</td>
               </tr>
             ))}
           </tbody>
@@ -1885,7 +1885,7 @@ function LegacyDepositInterestCalculator() {
         marginTop: "12px",
         padding: "11px 12px",
         borderRadius: "14px",
-        border: "1px solid rgba(212,161,125,0.20)",
+        border: "1px solid rgba(200,169,110,0.20)",
         color: "rgba(255,255,255,0.66)",
         fontSize: "12px",
         lineHeight: 1.6
@@ -1961,11 +1961,11 @@ function DepositInterestCalculator({ onSummaryChange }) {
   const helperStyle = { color: "rgba(255,255,255,0.58)", fontSize: "12px", lineHeight: 1.45 };
   const inputStyle = {
     width: "100%",
-    border: "1px solid rgba(212,161,125,0.32)",
+    border: "1px solid rgba(200,169,110,0.32)",
     borderRadius: "12px",
     padding: "10px 12px",
-    background: "rgba(36,26,36,0.72)",
-    color: "#F7F1E8"
+    background: "rgba(2,6,23,0.72)",
+    color: "#F8FAFC"
   };
 
   return (
@@ -1973,11 +1973,11 @@ function DepositInterestCalculator({ onSummaryChange }) {
       marginTop: "16px",
       padding: "16px",
       borderRadius: "18px",
-      border: "1px solid rgba(212,161,125,0.24)",
-      background: "rgba(36,26,36,0.46)",
-      color: "#F7F1E8"
+      border: "1px solid rgba(200,169,110,0.24)",
+      background: "rgba(2,6,23,0.46)",
+      color: "#E5E7EB"
     }}>
-      <h2 style={{margin: "0 0 6px", color: "#F7F1E8", fontSize: "1.2rem"}}>คำนวณดอกเบี้ยเงินฝากทั่วไป</h2>
+      <h2 style={{margin: "0 0 6px", color: "#F8FAFC", fontSize: "1.2rem"}}>คำนวณดอกเบี้ยเงินฝากทั่วไป</h2>
       <p style={{margin: "0 0 14px", color: "rgba(255,255,255,0.68)", fontSize: "13px", lineHeight: 1.6}}>
         ใช้คำนวณผลตอบแทนเงินฝากแบบง่าย โดยผู้ใช้กำหนดเงินต้น ดอกเบี้ย ภาษี และระยะเวลาฝากได้เอง
       </p>
@@ -1997,7 +1997,7 @@ function DepositInterestCalculator({ onSummaryChange }) {
         </label>
         <label style={fieldStyle}>
           <span>ดอกเบี้ยหลังหักภาษี (%)</span>
-          <input type="text" readOnly value={`${depositCalc.afterTaxRate.toFixed(2)}%`} style={{...inputStyle, color: "#B8754D", fontWeight: 900}} />
+          <input type="text" readOnly value={`${depositCalc.afterTaxRate.toFixed(2)}%`} style={{...inputStyle, color: "#C8A96E", fontWeight: 900}} />
         </label>
         <label style={fieldStyle}>
           <span>ระยะเวลาฝาก / คิดดอกเบี้ยรวม (ปี)</span>
@@ -2005,8 +2005,8 @@ function DepositInterestCalculator({ onSummaryChange }) {
           <small style={helperStyle}>เช่น ต้องการดูผลลัพธ์เงินฝาก 10 ปี หรือ 15 ปี ให้ใส่จำนวนปีที่ต้องการ</small>
         </label>
         <label style={{...fieldStyle, alignContent: "end"}}>
-          <span style={{display: "flex", alignItems: "center", gap: "10px", minHeight: "42px", color: "#F7F1E8", fontWeight: 800}}>
-            <input type="checkbox" checked={addEveryYear} onChange={(e) => setAddEveryYear(e.target.checked)} style={{width: "18px", height: "18px", accentColor: "#B8754D"}} />
+          <span style={{display: "flex", alignItems: "center", gap: "10px", minHeight: "42px", color: "#E5E7EB", fontWeight: 800}}>
+            <input type="checkbox" checked={addEveryYear} onChange={(e) => setAddEveryYear(e.target.checked)} style={{width: "18px", height: "18px", accentColor: "#C8A96E"}} />
             ฝากเพิ่มทุกปี
           </span>
         </label>
@@ -2030,16 +2030,16 @@ function DepositInterestCalculator({ onSummaryChange }) {
 
       <div className="deposit-summary-grid" style={{display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", marginTop: "14px"}}>
         {[
-          ["เงินฝากรวมทั้งหมด", money(depositCalc.totalDeposits), "#B8754D"],
+          ["เงินฝากรวมทั้งหมด", money(depositCalc.totalDeposits), "#C8A96E"],
           ["ดอกเบี้ยรวมหลังหักภาษี", money(depositCalc.totalInterest), "#4ADE80"],
           ["ยอดเงินปลายทาง", money(depositCalc.endingBalance), "#4ADE80"],
-          ["อัตราดอกเบี้ยสุทธิหลังหักภาษี", `${depositCalc.afterTaxRate.toFixed(2)}%`, "#B8754D"],
+          ["อัตราดอกเบี้ยสุทธิหลังหักภาษี", `${depositCalc.afterTaxRate.toFixed(2)}%`, "#C8A96E"],
         ].map(([label, value, color]) => (
           <div key={label} style={{
             padding: "12px",
             borderRadius: "14px",
-            border: "1px solid rgba(212,161,125,0.22)",
-            background: "rgba(48,35,48,0.68)"
+            border: "1px solid rgba(200,169,110,0.22)",
+            background: "rgba(15,23,42,0.68)"
           }}>
             <div style={{fontSize: "12px", color: "rgba(255,255,255,0.62)", marginBottom: "5px"}}>{label}</div>
             <div style={{fontSize: "20px", fontWeight: 900, color}}>{value}</div>
@@ -2052,7 +2052,7 @@ function DepositInterestCalculator({ onSummaryChange }) {
           <thead>
             <tr>
               {["ปีที่", "เงินต้นต้นปี", "ฝากเพิ่ม", "ดอกเบี้ยหลังหักภาษี", "ยอดปลายปี"].map((header) => (
-                <th key={header} style={{textAlign: "right", padding: "10px 8px", color: "#B8754D", borderBottom: "1px solid rgba(212,161,125,0.28)"}}>{header}</th>
+                <th key={header} style={{textAlign: "right", padding: "10px 8px", color: "#C8A96E", borderBottom: "1px solid rgba(200,169,110,0.28)"}}>{header}</th>
               ))}
             </tr>
           </thead>
@@ -2067,9 +2067,9 @@ function DepositInterestCalculator({ onSummaryChange }) {
               <tr key={row.year}>
                 <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>{row.year}</td>
                 <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>{money(row.startBalance)}</td>
-                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: row.addAmount > 0 ? "#B8754D" : "rgba(255,255,255,0.55)"}}>{money(row.addAmount)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: row.addAmount > 0 ? "#C8A96E" : "rgba(255,255,255,0.55)"}}>{money(row.addAmount)}</td>
                 <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#4ADE80"}}>{money(row.interest)}</td>
-                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#F7F1E8", fontWeight: 800}}>{money(row.endBalance)}</td>
+                <td style={{padding: "9px 8px", textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#F8FAFC", fontWeight: 800}}>{money(row.endBalance)}</td>
               </tr>
             ))}
           </tbody>
@@ -2080,7 +2080,7 @@ function DepositInterestCalculator({ onSummaryChange }) {
         marginTop: "12px",
         padding: "11px 12px",
         borderRadius: "14px",
-        border: "1px solid rgba(212,161,125,0.20)",
+        border: "1px solid rgba(200,169,110,0.20)",
         color: "rgba(255,255,255,0.66)",
         fontSize: "12px",
         lineHeight: 1.6
@@ -2097,12 +2097,12 @@ function DisabledFeatureCard({ title, detail }) {
     <div style={{
       padding: "16px",
       borderRadius: "16px",
-      border: "1px solid rgba(212,161,125,0.22)",
+      border: "1px solid rgba(200,169,110,0.22)",
       background: "rgba(255,255,255,0.055)",
-      color: "#F7F1E8"
+      color: "#E5E7EB"
     }}>
       <div style={{display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center"}}>
-        <div style={{fontWeight: 900, color: "#F7F1E8"}}>{title}</div>
+        <div style={{fontWeight: 900, color: "#F8FAFC"}}>{title}</div>
         <span style={{fontSize: "12px", padding: "6px 10px", borderRadius: "999px", background: "rgba(239,68,68,0.18)", color: "#FCA5A5", border: "1px solid rgba(239,68,68,0.35)"}}>เร็ว ๆ นี้</span>
       </div>
       <div style={{marginTop: "8px", color: "rgba(255,255,255,0.68)", fontSize: "13px", lineHeight: 1.6}}>{detail}</div>
@@ -2122,11 +2122,11 @@ function FeedbackPoll({ feedback, setFeedback }) {
       marginTop: "16px",
       padding: "16px",
       borderRadius: "16px",
-      background: "#FBF8F2",
-      border: "1px solid #D8C9BA"
+      background: "#FFFBF5",
+      border: "1px solid #EAD9B8"
     }}>
-      <h3 style={{margin: "0 0 10px", color: "#282326"}}>แบบประเมินความสนใจ</h3>
-      <p style={{margin: "0 0 12px", color: "#6F6469", fontSize: "13px"}}>
+      <h3 style={{margin: "0 0 10px", color: "#172033"}}>แบบประเมินความสนใจ</h3>
+      <p style={{margin: "0 0 12px", color: "#64748B", fontSize: "13px"}}>
         ข้อมูลนี้ใช้เก็บสถิติแบบไม่ระบุตัวตน เพื่อปรับปรุงการวิเคราะห์ในอนาคต
       </p>
       <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px"}}>
@@ -2135,9 +2135,9 @@ function FeedbackPoll({ feedback, setFeedback }) {
             key={item.key}
             onClick={() => setFeedback(item.key)}
             style={{
-              border: feedback === item.key ? "2px solid #B8754D" : "1px solid #E2E8F0",
-              background: feedback === item.key ? "#E8E0D4" : "white",
-              color: feedback === item.key ? "#6F6469" : "#334155",
+              border: feedback === item.key ? "2px solid #C8A96E" : "1px solid #E2E8F0",
+              background: feedback === item.key ? "#F9F4EB" : "white",
+              color: feedback === item.key ? "#7A6235" : "#334155",
               borderRadius: "12px",
               padding: "10px 8px",
               cursor: "pointer",
@@ -2161,19 +2161,19 @@ function FeedbackPoll({ feedback, setFeedback }) {
 function CompareUploadBox({ title, file, setFile, text, error, disabled = false }) {
   return (
     <div style={{
-      border: "2px dashed #B8754D",
+      border: "2px dashed #c8a96e",
       borderRadius: "16px",
       padding: "14px",
-      background: "#FBF8F2",
+      background: "#fffbf5",
       minHeight: "240px"
     }}>
-      <h3 style={{margin: "0 0 10px", color: "#282326", textAlign: "center"}}>{title}</h3>
+      <h3 style={{margin: "0 0 10px", color: "#172033", textAlign: "center"}}>{title}</h3>
 
       {!file ? (
         <label style={{display: "block", textAlign: "center", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1}}>
-          <Upload size={30} style={{color: "#6F6469", marginBottom: "8px"}} />
-          <div style={{fontWeight: 700, color: "#282326", marginBottom: "6px"}}>อัปโหลด PDF / รูปภาพ</div>
-          <div style={{fontSize: "12px", color: "#6F6469", marginBottom: "10px"}}>เลือกไฟล์ของ {title}</div>
+          <Upload size={30} style={{color: "#8a7a5b", marginBottom: "8px"}} />
+          <div style={{fontWeight: 700, color: "#172033", marginBottom: "6px"}}>อัปโหลด PDF / รูปภาพ</div>
+          <div style={{fontSize: "12px", color: "#8a7a5b", marginBottom: "10px"}}>เลือกไฟล์ของ {title}</div>
           <input
             type="file"
             accept=".pdf,.jpg,.jpeg,.png,.gif"
@@ -2187,12 +2187,12 @@ function CompareUploadBox({ title, file, setFile, text, error, disabled = false 
           />
           <span className="upload-file-btn" style={{
             display: "inline-block",
-            background: disabled ? "linear-gradient(135deg, #B8754D 0%, #9A5F3E 100%)" : "linear-gradient(135deg, #D4A17D 0%, #B8754D 45%, #9A5F3E 100%)",
-            color: "#241A24",
+            background: disabled ? "linear-gradient(135deg, #D0A74B 0%, #B8872D 100%)" : "linear-gradient(135deg, #DDBB68 0%, #C8A96E 45%, #B8872D 100%)",
+            color: "#07111f",
             padding: "10px 16px",
             borderRadius: "12px",
             fontWeight: 800,
-            border: "1px solid rgba(184,117,77,0.45)",
+            border: "1px solid rgba(126,83,20,0.45)",
             boxShadow: "0 8px 18px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.35)",
             opacity: 1
           }}>
@@ -2202,8 +2202,8 @@ function CompareUploadBox({ title, file, setFile, text, error, disabled = false 
       ) : (
         <div>
           <div style={{textAlign: "center"}}>
-            <FileText size={28} style={{color: "#B8754D", marginBottom: "6px"}} />
-            <div style={{fontWeight: 700, color: "#282326", wordBreak: "break-word"}}>{file.name}</div>
+            <FileText size={28} style={{color: "#c8a96e", marginBottom: "6px"}} />
+            <div style={{fontWeight: 700, color: "#172033", wordBreak: "break-word"}}>{file.name}</div>
             <button
               onClick={() => setFile(null)}
               style={{
@@ -2238,14 +2238,14 @@ function CompareUploadBox({ title, file, setFile, text, error, disabled = false 
           {text && !error && (
             <div style={{
               marginTop: "12px",
-              backgroundColor: "#E8E0D4",
+              backgroundColor: "#f9f4eb",
               padding: "10px",
               borderRadius: "10px",
               maxHeight: "160px",
               overflowY: "auto",
               fontSize: "12px",
               lineHeight: "1.5",
-              color: "#6F6469",
+              color: "#495065",
               whiteSpace: "pre-wrap",
               wordBreak: "break-word"
             }}>
